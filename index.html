@@ -3,60 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karthik Alasakani  | L&D Strategist & Systems Builder</title>
+    <title>Karthik Alasakani | L&D Strategist & Systems Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Stone & Teal -->
-    <!-- Application Structure Plan: A single-page portfolio with thematic sections (Philosophy, Experience, Projects, Skills) accessed via sticky navigation. The structure now incorporates LIVE Gemini API integrations. The "ProfilePress AI" project modal features a real-time resume bullet point translator. A new "Interview Prep" feature has been added to the Experience section, allowing users to click on an achievement and use Gemini to generate a relevant behavioral interview question and a STAR method answer in a modal. This enhances interactivity and demonstrates practical AI application development skills. -->
+    <!-- Chosen Palette: Slate & Amber -->
+    <!-- Application Structure Plan: A single-page portfolio with thematic sections. The core change is the removal of all modals. Project demos are now embedded directly within expandable project cards, making them immediately accessible. The "AI Interview Prep" feature is also embedded, displaying results inline upon a button click. A new visual cue (a curved arrow) has been added to guide users to this feature, improving discoverability without intrusive pop-ups. This creates a more fluid, integrated, and less intimidating user experience. -->
     <!-- Visualization & Content Choices: 
-        - Report Info: Core Competencies -> Goal: Compare -> Viz: Chart.js Radar Chart -> Interaction: Hover -> Justification: Quick visual summary of skill distribution.
-        - Report Info: Professional Experience -> Goal: Inform & Engage -> Viz: Interactive timeline + Live AI feature -> Interaction: Click tabs for details; click '✨' icon to call Gemini API for interview prep -> Justification: Allows deep dive into roles and provides a valuable, AI-powered utility.
-        - Report Info: Personal Projects -> Goal: Demonstrate & Engage -> Viz: Interactive cards with Modals + Live AI Demo -> Interaction: Click to open modal; interact with live Gemini-powered demo -> Justification: Provides tangible proof of building functional AI solutions. No SVG/Mermaid used. -->
+        - Report Info: Core Competencies -> Goal: Compare -> Viz: Chart.js Radar Chart -> Interaction: Hover -> Justification: Quick visual summary.
+        - Report Info: Professional Experience -> Goal: Inform & Engage -> Viz: Interactive timeline + Inline AI feature -> Interaction: Click tabs for details; click '✨' icon to call Gemini API and display results inline -> Justification: More seamless and less intimidating than a modal.
+        - Report Info: Personal Projects -> Goal: Demonstrate & Engage -> Viz: Expandable cards with embedded demos -> Interaction: Click to expand/collapse and interact with demos -> Justification: Makes demos instantly accessible and showcases functionality without pop-ups. No SVG/Mermaid used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f5f5f4; /* stone-100 */
-            color: #292524; /* stone-800 */
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
         }
         .nav-link {
             transition: color 0.3s ease;
         }
         .nav-link:hover, .nav-link.active {
-            color: #0d9488; /* teal-600 */
+            color: #f59e0b; /* amber-500 */
         }
         .section-title {
-            color: #1c1917; /* stone-900 */
+            color: #0f172a; /* slate-900 */
         }
         .btn-primary {
-            background-color: #0d9488; /* teal-600 */
-            color: white;
+            background-color: #f59e0b; /* amber-500 */
+            color: #0f172a; /* slate-900 */
             transition: background-color 0.3s ease;
         }
         .btn-primary:hover {
-            background-color: #0f766e; /* teal-700 */
+            background-color: #d97706; /* amber-600 */
         }
         .btn-primary:disabled {
-            background-color: #5eead4; /* teal-300 */
+            background-color: #fcd34d; /* amber-300 */
             cursor: not-allowed;
-        }
-        .modal {
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .modal-content {
-            animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(20px); }
-            to { transform: translateY(0); }
         }
         .chart-container {
             position: relative;
@@ -73,7 +58,7 @@
         }
         .spinner {
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #0d9488;
+            border-top: 2px solid #f59e0b; /* amber-500 */
             border-radius: 50%;
             width: 16px;
             height: 16px;
@@ -96,26 +81,41 @@
         }
         .timetable-header {
             font-weight: 600;
-            background-color: #e7e5e4; /* stone-200 */
+            background-color: #e2e8f0; /* slate-200 */
         }
         .timetable-slot {
-            background-color: #f5f5f4; /* stone-100 */
+            background-color: #f1f5f9; /* slate-100 */
             min-height: 40px;
         }
         .timetable-class {
-            background-color: #ccfbf1; /* teal-100 */
-            border: 1px solid #5eead4; /* teal-200 */
-            color: #134e4a; /* teal-900 */
+            background-color: #fef3c7; /* amber-100 */
+            border: 1px solid #fde68a; /* amber-200 */
+            color: #78350f; /* amber-900 */
             font-weight: 500;
+        }
+        .demo-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .demo-container.open {
+            max-height: 1000px; /* Adjust as needed */
+        }
+        .curved-arrow {
+            position: relative;
+            display: inline-block;
+            color: #f59e0b;
+            font-size: 1.5rem;
+            transform: rotate(10deg);
         }
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Header & Nav -->
-    <header id="header" class="bg-stone-100/80 backdrop-blur-md sticky top-0 z-50">
+    <header id="header" class="bg-slate-50/80 backdrop-blur-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-stone-800">Karthik Alasakani </a>
+            <a href="#" class="text-xl font-bold text-slate-800">Karthik Alasakani</a>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#philosophy" class="nav-link font-medium">Philosophy</a>
                 <a href="#experience" class="nav-link font-medium">Experience</a>
@@ -130,8 +130,8 @@
 
         <!-- Hero Section -->
         <section id="hero" class="text-center mb-20 md:mb-32">
-            <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-stone-900 mb-4">L&D Strategist & Systems Builder</h1>
-            <p class="text-lg md:text-xl max-w-3xl mx-auto text-stone-600">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 mb-4">L&D Strategist & Systems Builder</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto text-slate-600">
                 Transforming learning through scalable, AI-first systems. I bridge the gap between academic theory and practical, performance-driven training solutions.
             </p>
         </section>
@@ -140,23 +140,23 @@
         <section id="philosophy" class="mb-20 md:mb-32">
             <h2 class="section-title text-3xl font-bold text-center mb-12">My Approach</h2>
              <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-stone-600">This section outlines my core mindset, which aligns directly with the values of modern, impactful L&D. I believe in building systems, leveraging technology, and focusing on measurable outcomes to foster genuine growth and performance enhancement.</p>
+                <p class="text-slate-600">This section outlines my core mindset, which aligns directly with the values of modern, impactful L&D. I believe in building systems, leveraging technology, and focusing on measurable outcomes to foster genuine growth and performance enhancement.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <div class="text-3xl mb-3">⚙️</div>
                     <h3 class="font-semibold text-lg mb-2">Systems Thinker</h3>
-                    <p class="text-stone-600 text-sm">I design L&D initiatives not as one-off events, but as repeatable, scalable systems that integrate seamlessly into the organizational workflow, ensuring consistency and long-term impact.</p>
+                    <p class="text-slate-600 text-sm">I design L&D initiatives not as one-off events, but as repeatable, scalable systems that integrate seamlessly into the organizational workflow, ensuring consistency and long-term impact.</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <div class="text-3xl mb-3">🤖</div>
                     <h3 class="font-semibold text-lg mb-2">AI-First Innovator</h3>
-                    <p class="text-stone-600 text-sm">I actively build with and champion AI tools to create smarter, more personalized, and efficient learning experiences, moving beyond adoption to genuine application development.</p>
+                    <p class="text-slate-600 text-sm">I actively build with and champion AI tools to create smarter, more personalized, and efficient learning experiences, moving beyond adoption to genuine application development.</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <div class="text-3xl mb-3">🎯</div>
                     <h3 class="font-semibold text-lg mb-2">Execution-Focused</h3>
-                    <p class="text-stone-600 text-sm">My focus is on practical execution and delivering tangible results. I translate high-level strategy into actionable plans and meticulously manage them to completion and beyond.</p>
+                    <p class="text-slate-600 text-sm">My focus is on practical execution and delivering tangible results. I translate high-level strategy into actionable plans and meticulously manage them to completion and beyond.</p>
                 </div>
             </div>
         </section>
@@ -165,7 +165,7 @@
         <section id="experience" class="mb-20 md:mb-32">
             <h2 class="section-title text-3xl font-bold text-center mb-12">Career Journey</h2>
              <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-stone-600">This timeline highlights my professional roles. My time as Assistant Dean at Joy University was a pivotal experience where I functioned as a de-facto L&D systems architect, laying the groundwork for the institution's entire training and operational infrastructure. Click a role to see the details.</p>
+                <p class="text-slate-600">This timeline highlights my professional roles. My time as Assistant Dean at Joy University was a pivotal experience where I functioned as a de-facto L&D systems architect, laying the groundwork for the institution's entire training and operational infrastructure. Click a role to see the details.</p>
             </div>
             <div id="experience-container" class="max-w-4xl mx-auto">
                 <!-- JS will populate this section -->
@@ -176,7 +176,7 @@
         <section id="projects" class="mb-20 md:mb-32">
             <h2 class="section-title text-3xl font-bold text-center mb-12">Personal Projects Showcase</h2>
             <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-stone-600">I believe in learning by building. These projects are tangible proof of my ability to design and execute complex, end-to-end solutions that solve real-world problems. They demonstrate my passion for technology, product thinking, and user-centric design.</p>
+                <p class="text-slate-600">I believe in learning by building. These projects are tangible proof of my ability to design and execute complex, end-to-end solutions that solve real-world problems. They demonstrate my passion for technology, product thinking, and user-centric design.</p>
             </div>
             <div class="grid md:grid-cols-2 gap-8" id="projects-grid">
                 <!-- JS will populate this section -->
@@ -187,7 +187,7 @@
         <section id="skills" class="mb-20 md:mb-32">
             <h2 class="section-title text-3xl font-bold text-center mb-12">Core Competencies</h2>
              <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-stone-600">This visualization provides a holistic view of my skill set, blending strategic L&D capabilities with deep technical and analytical expertise. This unique combination allows me to not only design training but also to build the systems and analyze the data that make it effective.</p>
+                <p class="text-slate-600">This visualization provides a holistic view of my skill set, blending strategic L&D capabilities with deep technical and analytical expertise. This unique combination allows me to not only design training but also to build the systems and analyze the data that make it effective.</p>
             </div>
             <div class="chart-container">
                 <canvas id="skillsChart"></canvas>
@@ -197,25 +197,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-stone-200 text-center py-6">
-        <p class="text-stone-600">Designed & Built by Karthik Alasakani  | 2025</p>
+    <footer class="bg-slate-200 text-center py-6">
+        <p class="text-slate-600">Designed & Built by Karthik Alasakani | 2025</p>
     </footer>
-
-    <!-- Modals -->
-    <div id="project-modal-container"></div>
-    <div id="interview-prep-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="modal-content bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl p-6 md:p-8">
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                   <h3 class="font-bold text-2xl">✨ AI Interview Prep</h3>
-                   <p class="text-teal-600 font-semibold">Generated by Gemini</p>
-                </div>
-                <button id="close-interview-modal" class="text-stone-400 hover:text-stone-600 text-3xl">&times;</button>
-            </div>
-            <div id="interview-prep-content"></div>
-        </div>
-    </div>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -255,52 +239,30 @@
                         tags: ["React", "TailwindCSS", "Systems Design", "Algorithm"],
                         details: `
                             <h4 class="font-semibold text-lg mb-2">Key Features & Architecture:</h4>
-                            <p class="text-stone-600 mb-4">This project was an exercise in building a complete, productised system from scratch. It handles complex data inputs, rule definitions, and uses a custom solver to generate optimized outputs.</p>
-                            <ul class="space-y-2 text-stone-700 text-sm list-disc list-inside mb-6">
+                            <p class="text-slate-600 mb-4">This project was an exercise in building a complete, productised system from scratch. It handles complex data inputs, rule definitions, and uses a custom solver to generate optimized outputs.</p>
+                            <ul class="space-y-2 text-slate-700 text-sm list-disc list-inside mb-6">
                                 <li><strong>Modular Data Setup:</strong> Manage programmes, courses, faculty, and resources through an intuitive, CSV-enabled interface.</li>
                                 <li><strong>Dynamic Constraint Engine:</strong> Define both university-wide rules and custom constraints (e.g., faculty unavailability) with toggle controls.</li>
                                 <li><strong>Two-Step Generation:</strong> An initial automated faculty allocation step followed by a powerful backtracking solver for final timetable generation.</li>
-                                <li><strong>Rich Feature Set:</strong> Includes a faculty substitute finder, detailed failure analysis reporting, and PDF/Excel export capabilities.</li>
                             </ul>
-                            <div class="border-t border-stone-200 pt-6">
-                                <h4 class="font-semibold text-lg mb-2">⚙️ Simulated Demo:</h4>
-                                <p class="text-stone-600 mb-4 text-sm">This is a simplified simulation of the timetabling process to demonstrate the application's workflow.</p>
-                                <div class="space-y-4 p-4 bg-stone-50 rounded-lg border border-stone-200">
-                                     <p class="text-sm"><strong>Step 1:</strong> Define inputs and constraints (pre-filled for demo).</p>
-                                     <button id="generate-timetable-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
-                                        <span id="timetable-btn-text">Generate Timetable</span>
-                                        <div id="timetable-spinner" class="spinner ml-2 hidden"></div>
-                                    </button>
-                                    <div id="timetable-output" class="hidden mt-4">
-                                        <p class="text-sm font-semibold mb-2"><strong>Step 2:</strong> Review Generated Timetable (Sample Output)</p>
-                                        <div class="timetable-grid p-2 bg-white rounded-md">
-                                            <div class="timetable-header">Time</div>
-                                            <div class="timetable-header">Mon</div>
-                                            <div class="timetable-header">Tue</div>
-                                            <div class="timetable-header">Wed</div>
-                                            <div class="timetable-header">Thu</div>
-                                            <div class="timetable-header">Fri</div>
-                                            
-                                            <div class="timetable-header">9-10</div>
-                                            <div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div>
-                                            <div class="timetable-slot"></div>
-                                            <div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div>
-                                            <div class="timetable-slot"></div>
-                                            <div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div>
-
-                                            <div class="timetable-header">10-11</div>
-                                            <div class="timetable-slot"></div>
-                                            <div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div>
-                                            <div class="timetable-slot"></div>
-                                            <div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div>
-                                            <div class="timetable-slot"></div>
-                                            
-                                            <div class="timetable-header">11-12</div>
-                                            <div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div>
-                                            <div class="timetable-slot"></div>
-                                            <div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div>
-                                            <div class="timetable-slot"></div>
-                                            <div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div>
+                            <div class="demo-container">
+                                <div class="border-t border-slate-200 pt-6">
+                                    <h4 class="font-semibold text-lg mb-2">⚙️ Simulated Demo:</h4>
+                                    <p class="text-slate-600 mb-4 text-sm">This is a simplified simulation of the timetabling process to demonstrate the application's workflow.</p>
+                                    <div class="space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                         <p class="text-sm"><strong>Step 1:</strong> Define inputs and constraints (pre-filled for demo).</p>
+                                         <button id="generate-timetable-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
+                                            <span id="timetable-btn-text">Generate Timetable</span>
+                                            <div id="timetable-spinner" class="spinner ml-2 hidden"></div>
+                                        </button>
+                                        <div id="timetable-output" class="hidden mt-4">
+                                            <p class="text-sm font-semibold mb-2"><strong>Step 2:</strong> Review Generated Timetable (Sample Output)</p>
+                                            <div class="timetable-grid p-2 bg-white rounded-md">
+                                                <div class="timetable-header">Time</div><div class="timetable-header">Mon</div><div class="timetable-header">Tue</div><div class="timetable-header">Wed</div><div class="timetable-header">Thu</div><div class="timetable-header">Fri</div>
+                                                <div class="timetable-header">9-10</div><div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div>
+                                                <div class="timetable-header">10-11</div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div><div class="timetable-slot"></div>
+                                                <div class="timetable-header">11-12</div><div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -314,22 +276,28 @@
                         description: "Designed and developed a proof-of-concept web application using the Gemini API to help professionals translate their experience for new career paths.",
                         tags: ["Generative AI", "Gemini API", "React", "HR-Tech"],
                         details: `
-                            <h4 class="font-semibold text-lg mb-2">✨ Live Gemini API Demo:</h4>
-                            <p class="text-stone-600 mb-4">This project demonstrates a proactive, innovation-focused mindset by solving a real-world problem in professional development. It's not just about using AI, but building with it. Try the live demo below.</p>
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="raw-exp" class="block text-sm font-medium text-stone-700 mb-1">Your Raw Experience:</label>
-                                    <textarea id="raw-exp" rows="3" class="w-full p-2 border rounded-md bg-stone-50">Supervised the Faculty Course Load Allocation for each School.</textarea>
+                            <h4 class="font-semibold text-lg mb-2">Key Features & Architecture:</h4>
+                            <p class="text-slate-600 mb-4">This project demonstrates a proactive, innovation-focused mindset by solving a real-world problem in professional development. It's not just about using AI, but building with it.</p>
+                            <div class="demo-container">
+                                <div class="border-t border-slate-200 pt-6">
+                                    <h4 class="font-semibold text-lg mb-2">✨ Live Gemini API Demo:</h4>
+                                    <p class="text-slate-600 mb-4 text-sm">Try the live demo below to see how it rephrases resume points for a target role.</p>
+                                    <div class="space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                        <div>
+                                            <label for="raw-exp" class="block text-sm font-medium text-slate-700 mb-1">Your Raw Experience:</label>
+                                            <textarea id="raw-exp" rows="3" class="w-full p-2 border rounded-md bg-white">Developed new course curriculum and syllabi.</textarea>
+                                        </div>
+                                        <div>
+                                            <label for="target-role" class="block text-sm font-medium text-slate-700 mb-1">Target Role:</label>
+                                            <input type="text" id="target-role" class="w-full p-2 border rounded-md bg-white" value="Project Manager">
+                                        </div>
+                                        <button id="translate-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
+                                            <span id="translate-btn-text">Translate with AI</span>
+                                            <div id="translate-spinner" class="spinner ml-2 hidden"></div>
+                                        </button>
+                                        <div id="ai-output" class="hidden mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg"></div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="target-role" class="block text-sm font-medium text-stone-700 mb-1">Target Role:</label>
-                                    <input type="text" id="target-role" class="w-full p-2 border rounded-md bg-stone-50" value="Project Manager">
-                                </div>
-                                <button id="translate-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
-                                    <span id="translate-btn-text">Translate with AI</span>
-                                    <div id="translate-spinner" class="spinner ml-2 hidden"></div>
-                                </button>
-                                <div id="ai-output" class="hidden mt-4 p-4 bg-teal-50 border-l-4 border-teal-500 rounded-r-lg"></div>
                             </div>
                         `
                     }
@@ -379,10 +347,10 @@
 
             function renderExperience() {
                 experienceContainer.innerHTML = `
-                    <div class="flex flex-col md:flex-row gap-8">
-                        <div class="flex md:flex-col overflow-x-auto md:overflow-x-visible border-b md:border-b-0 md:border-r border-stone-200 pr-4 md:pr-8">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex border-b border-slate-200 overflow-x-auto">
                             ${appData.experience.map((exp, index) => `
-                                <button data-index="${index}" class="experience-tab text-left whitespace-nowrap py-3 md:py-2 px-4 md:px-0 text-stone-500 font-medium ${index === activeExperienceTab ? 'text-teal-600 border-b-2 md:border-b-0 md:border-r-2 border-teal-600' : ''}">
+                                <button data-index="${index}" class="experience-tab text-left whitespace-nowrap py-3 px-4 font-medium -mb-px transition-colors duration-200 ${index === activeExperienceTab ? 'text-amber-500 border-b-2 border-amber-500' : 'text-slate-500 border-b-2 border-transparent hover:border-slate-300'}">
                                     ${exp.role}
                                 </button>
                             `).join('')}
@@ -403,18 +371,25 @@
                 const detailsContainer = document.getElementById('experience-details');
                 const exp = appData.experience[activeExperienceTab];
                 detailsContainer.innerHTML = `
-                    <div class="p-4 bg-white rounded-xl shadow-sm border border-stone-200">
-                        <h3 class="text-xl font-bold text-stone-800">${exp.role}</h3>
-                        <p class="text-teal-600 font-semibold mb-2">${exp.company}</p>
-                        <p class="text-sm text-stone-500 mb-4">${exp.duration}</p>
-                        <p class="italic text-stone-600 mb-4">${exp.description}</p>
-                        <ul class="space-y-3 text-sm text-stone-700">
-                            ${exp.points.map(point => `
-                                <li class="flex items-start">
-                                    <span class="text-teal-500 mr-2 mt-1">◆</span>
+                    <div class="p-4 bg-white rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold text-slate-800">${exp.role}</h3>
+                        <p class="text-amber-600 font-semibold mb-2">${exp.company}</p>
+                        <p class="text-sm text-slate-500 mb-4">${exp.duration}</p>
+                        <p class="italic text-slate-600 mb-4">${exp.description}</p>
+                        <ul class="space-y-3 text-sm text-slate-700">
+                            ${exp.points.map((point, index) => `
+                                <li class="flex items-start group relative">
+                                    <span class="text-amber-500 mr-2 mt-1">◆</span>
                                     <span class="flex-1">${point}</span>
-                                    <button class="generate-interview-btn ml-2 text-xs text-teal-600 hover:text-teal-800 font-semibold" title="Generate Interview Question">✨ Prep</button>
-                                </li>`).join('')}
+                                    <button class="generate-interview-btn ml-2 text-xs text-amber-600 hover:text-amber-800 font-semibold" title="Generate Interview Question">✨ Prep</button>
+                                    ${index === 0 && activeExperienceTab === 0 ? `
+                                        <div class="absolute right-0 -top-8 hidden md:flex items-center">
+                                            <span class="text-slate-500 text-sm italic whitespace-nowrap">Click me!</span>
+                                            <div class="curved-arrow ml-2 -scale-x-100">⤷</div>
+                                        </div>
+                                    ` : ''}
+                                </li>
+                            `).join('')}
                         </ul>
                     </div>
                 `;
@@ -425,133 +400,114 @@
 
             // --- Projects Section ---
             const projectsGrid = document.getElementById('projects-grid');
-            const modalContainer = document.getElementById('project-modal-container');
             
             projectsGrid.innerHTML = appData.projects.map(p => `
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col">
-                    <h3 class="font-bold text-xl mb-1">${p.title}</h3>
-                    <p class="text-teal-600 font-semibold mb-3">${p.subtitle}</p>
-                    <p class="text-stone-600 text-sm mb-4 flex-grow">${p.description}</p>
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        ${p.tags.map(tag => `<span class="bg-stone-100 text-stone-600 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
-                    </div>
-                    <button data-project-id="${p.id}" class="open-modal-btn mt-auto w-full text-center py-2 px-4 rounded-lg bg-stone-100 text-stone-700 font-semibold hover:bg-stone-200 transition">View Details</button>
-                </div>
-            `).join('');
-
-            modalContainer.innerHTML = appData.projects.map(p => `
-                <div id="${p.id}-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-                    <div class="modal-content bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl p-6 md:p-8">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                               <h3 class="font-bold text-2xl">${p.title}</h3>
-                               <p class="text-teal-600 font-semibold">${p.subtitle}</p>
-                            </div>
-                            <button data-project-id="${p.id}" class="close-modal-btn text-stone-400 hover:text-stone-600 text-3xl">&times;</button>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                    <div id="${p.id}-card">
+                        <h3 class="font-bold text-xl mb-1">${p.title}</h3>
+                        <p class="text-amber-600 font-semibold mb-3">${p.subtitle}</p>
+                        <p class="text-slate-600 text-sm mb-4 flex-grow">${p.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            ${p.tags.map(tag => `<span class="bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
                         </div>
-                        <div>${p.details}</div>
+                        <div class="mt-auto">${p.details}</div>
                     </div>
+                     <button data-project-id="${p.id}" class="toggle-demo-btn mt-4 w-full text-center py-2 px-4 rounded-lg bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition">Show Demo</button>
                 </div>
             `).join('');
-
-            document.querySelectorAll('.open-modal-btn').forEach(btn => {
-                btn.addEventListener('click', e => {
-                    const projectId = e.currentTarget.dataset.projectId;
-                    document.getElementById(`${projectId}-modal`).style.display = 'flex';
-                    // Add event listeners for demos inside the opened modal
-                    if (projectId === 'profile-press') {
-                        addProfilePressDemoLogic();
-                    } else if (projectId === 'acadia-plan') {
-                        addAcadiaPlanDemoLogic();
-                    }
-                });
-            });
-
-            document.querySelectorAll('.close-modal-btn').forEach(btn => {
-                btn.addEventListener('click', e => {
-                    const projectId = e.currentTarget.dataset.projectId;
-                    document.getElementById(`${projectId}-modal`).style.display = 'none';
+            
+            // --- Project Demo Toggling ---
+            document.querySelectorAll('.toggle-demo-btn').forEach(btn => {
+                const projectId = btn.dataset.projectId;
+                const card = document.getElementById(`${projectId}-card`);
+                const demoContainer = card.querySelector('.demo-container');
+                
+                btn.addEventListener('click', () => {
+                    const isOpen = demoContainer.classList.contains('open');
+                    demoContainer.classList.toggle('open');
+                    btn.textContent = isOpen ? 'Show Demo' : 'Hide Demo';
                 });
             });
 
              // --- Live AI Demo Logic ---
-            function addProfilePressDemoLogic() {
-                const translateBtn = document.getElementById('translate-btn');
-                if (translateBtn) {
-                    translateBtn.onclick = async () => {
-                        const outputDiv = document.getElementById('ai-output');
-                        const btnText = document.getElementById('translate-btn-text');
-                        const spinner = document.getElementById('translate-spinner');
-                        const rawExp = document.getElementById('raw-exp').value;
-                        const targetRole = document.getElementById('target-role').value;
+            const translateBtn = document.getElementById('translate-btn');
+            if (translateBtn) {
+                translateBtn.addEventListener('click', async () => {
+                    const outputDiv = document.getElementById('ai-output');
+                    const btnText = document.getElementById('translate-btn-text');
+                    const spinner = document.getElementById('translate-spinner');
+                    const rawExp = document.getElementById('raw-exp').value;
+                    const targetRole = document.getElementById('target-role').value;
 
-                        btnText.textContent = 'Generating...';
-                        spinner.classList.remove('hidden');
-                        translateBtn.disabled = true;
-                        outputDiv.classList.add('hidden');
+                    btnText.textContent = 'Generating...';
+                    spinner.classList.remove('hidden');
+                    translateBtn.disabled = true;
+                    outputDiv.classList.add('hidden');
 
-                        const prompt = `You are an expert career coach. Rewrite the following resume bullet point: "${rawExp}" to be more impactful for a "${targetRole}" position. Provide 3 distinct options, starting each with a strong action verb and quantifying the achievement. Your response must be ONLY an HTML unordered list (<ul>...</ul>) and nothing else. Do not include any introductory text or markdown formatting.`;
-                        
-                        const result = await callGemini(prompt);
-                        const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
-                        
-                        outputDiv.innerHTML = cleanedResult;
-                        outputDiv.classList.remove('hidden');
-                        btnText.textContent = 'Translate with AI';
-                        spinner.classList.add('hidden');
-                        translateBtn.disabled = false;
-                    };
-                }
+                    const prompt = `You are an expert career coach. Rewrite the following resume bullet point: "${rawExp}" to be more impactful for a "${targetRole}" position. Provide 3 distinct options, starting each with a strong action verb and quantifying the achievement. Your response must be ONLY an HTML unordered list (<ul>...</ul>) and nothing else. Do not include any introductory text or markdown formatting.`;
+                    
+                    const result = await callGemini(prompt);
+                    const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
+                    
+                    outputDiv.innerHTML = cleanedResult;
+                    outputDiv.classList.remove('hidden');
+                    btnText.textContent = 'Translate with AI';
+                    spinner.classList.add('hidden');
+                    translateBtn.disabled = false;
+                });
             }
 
             // --- AcadiaPlan Demo Logic ---
-            function addAcadiaPlanDemoLogic() {
-                const generateBtn = document.getElementById('generate-timetable-btn');
-                if(generateBtn) {
-                    generateBtn.onclick = () => {
-                        const outputDiv = document.getElementById('timetable-output');
-                        const btnText = document.getElementById('timetable-btn-text');
-                        const spinner = document.getElementById('timetable-spinner');
+            const generateBtn = document.getElementById('generate-timetable-btn');
+            if(generateBtn) {
+                generateBtn.addEventListener('click', () => {
+                    const outputDiv = document.getElementById('timetable-output');
+                    const btnText = document.getElementById('timetable-btn-text');
+                    const spinner = document.getElementById('timetable-spinner');
 
-                        btnText.textContent = 'Solving Constraints...';
-                        spinner.classList.remove('hidden');
-                        generateBtn.disabled = true;
-                        outputDiv.classList.add('hidden');
+                    btnText.textContent = 'Solving Constraints...';
+                    spinner.classList.remove('hidden');
+                    generateBtn.disabled = true;
+                    outputDiv.classList.add('hidden');
 
-                        setTimeout(() => {
-                            outputDiv.classList.remove('hidden');
-                            btnText.textContent = 'Generate Timetable';
-                            spinner.classList.add('hidden');
-                            generateBtn.disabled = false;
-                        }, 1200);
-                    };
-                }
+                    setTimeout(() => {
+                        outputDiv.classList.remove('hidden');
+                        btnText.textContent = 'Generate Timetable';
+                        spinner.classList.add('hidden');
+                        generateBtn.disabled = false;
+                    }, 1200);
+                });
             }
 
             // --- Interview Prep AI Logic ---
-            const interviewModal = document.getElementById('interview-prep-modal');
-            const interviewContent = document.getElementById('interview-prep-content');
-            
             function addInterviewPrepEventListeners() {
                 document.querySelectorAll('.generate-interview-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
-                        const achievementText = e.currentTarget.previousElementSibling.textContent;
-                        interviewContent.innerHTML = '<div class="flex justify-center items-center p-8"><div class="spinner"></div><p class="ml-4 text-stone-600">Generating question...</p></div>';
-                        interviewModal.style.display = 'flex';
+                        const li = e.currentTarget.closest('li');
+                        let prepContainer = li.nextElementSibling;
+                        
+                        // Remove existing prep container if it's there
+                        if (prepContainer && prepContainer.classList.contains('prep-container')) {
+                            prepContainer.remove();
+                            return;
+                        }
+                        
+                        // Create and insert new prep container
+                        prepContainer = document.createElement('li');
+                        prepContainer.className = 'prep-container mt-2 mb-4 ml-6';
+                        prepContainer.innerHTML = '<div class="flex items-center p-4 bg-slate-50 rounded-lg"><div class="spinner"></div><p class="ml-4 text-slate-600">Generating question...</p></div>';
+                        li.insertAdjacentElement('afterend', prepContainer);
 
+                        const achievementText = e.currentTarget.previousElementSibling.textContent;
                         const prompt = `You are an expert interviewer. Based on this resume achievement: "${achievementText}", generate one challenging behavioral interview question and then draft a sample answer using the STAR method. The question should start with "Tell me about a time when...". Format the entire response in clean HTML with headings for the question and each STAR component (Situation, Task, Action, Result). Do not wrap the response in markdown code fences.`;
 
                         const result = await callGemini(prompt);
                         const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
-                        interviewContent.innerHTML = cleanedResult;
+                        prepContainer.innerHTML = `<div class="p-4 bg-slate-50 rounded-lg border-l-4 border-amber-400">${cleanedResult}</div>`;
                     });
                 });
             }
             
-            document.getElementById('close-interview-modal').addEventListener('click', () => {
-                interviewModal.style.display = 'none';
-            });
-
             // --- Skills Chart ---
             const ctx = document.getElementById('skillsChart').getContext('2d');
             new Chart(ctx, {
@@ -561,27 +517,27 @@
                     datasets: [{
                         label: 'Proficiency',
                         data: appData.skills.data,
-                        backgroundColor: 'rgba(13, 148, 136, 0.2)',
-                        borderColor: 'rgb(13, 148, 136)',
-                        pointBackgroundColor: 'rgb(13, 148, 136)',
+                        backgroundColor: 'rgba(245, 158, 11, 0.2)', // amber-500
+                        borderColor: 'rgb(245, 158, 11)',
+                        pointBackgroundColor: 'rgb(245, 158, 11)',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(13, 148, 136)'
+                        pointHoverBorderColor: 'rgb(245, 158, 11)'
                     }]
                 },
                 options: {
                     maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: { color: 'rgba(41, 37, 36, 0.1)' },
-                            grid: { color: 'rgba(41, 37, 36, 0.1)' },
+                            angleLines: { color: 'rgba(30, 41, 59, 0.1)' },
+                            grid: { color: 'rgba(30, 41, 59, 0.1)' },
                             pointLabels: { 
                                 font: { size: 12, weight: '500' },
-                                color: '#44403c'
+                                color: '#334155' // slate-700
                             },
                             ticks: {
-                                backdropColor: 'rgba(245, 245, 244, 0.7)',
-                                color: '#78716c',
+                                backdropColor: 'rgba(248, 250, 252, 0.7)', // slate-50
+                                color: '#64748b', // slate-500
                                 stepSize: 20
                             },
                             suggestedMin: 0,
