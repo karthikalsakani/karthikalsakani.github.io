@@ -101,13 +101,6 @@
         .demo-container.open {
             max-height: 1000px; /* Adjust as needed */
         }
-        .curved-arrow {
-            position: relative;
-            display: inline-block;
-            color: #f59e0b;
-            font-size: 1.5rem;
-            transform: rotate(10deg);
-        }
     </style>
 </head>
 <body class="antialiased">
@@ -383,9 +376,9 @@
                                     <span class="flex-1">${point}</span>
                                     <button class="generate-interview-btn ml-2 text-xs text-amber-600 hover:text-amber-800 font-semibold" title="Generate Interview Question">✨ Prep</button>
                                     ${index === 0 && activeExperienceTab === 0 ? `
-                                        <div class="absolute right-0 -top-8 hidden md:flex items-center">
+                                        <div class="absolute right-14 -top-1 hidden md:flex items-center pointer-events-none">
                                             <span class="text-slate-500 text-sm italic whitespace-nowrap">Click me!</span>
-                                            <div class="curved-arrow ml-2 -scale-x-100">⤷</div>
+                                            <div class="text-amber-500 text-4xl ml-1" style="transform: rotate(15deg) scaleX(-1);">↱</div>
                                         </div>
                                     ` : ''}
                                 </li>
