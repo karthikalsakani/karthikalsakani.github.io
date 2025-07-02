@@ -8,57 +8,79 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Slate & Amber -->
-    <!-- Application Structure Plan: A single-page portfolio with thematic sections. The core change is the removal of all modals. Project demos are now embedded directly within expandable project cards, making them immediately accessible. The "AI Interview Prep" feature is also embedded, displaying results inline upon a button click. A new visual cue (a curved arrow) has been added to guide users to this feature, improving discoverability without intrusive pop-ups. This creates a more fluid, integrated, and less intimidating user experience. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Dark Slate & Bright Teal -->
+    <!-- Application Structure Plan: A single-page scrolling layout is adopted for a fluid, narrative-driven user experience. The section order (Hero, Approach, Journey, Projects, Skills, Contact) guides the user from a high-level introduction to tangible proof of work. The sticky navigation enhances usability by providing constant access to all sections. This structure is more modern and intuitive than the previous version, prioritizing a clean aesthetic and clear information hierarchy. -->
     <!-- Visualization & Content Choices: 
-        - Report Info: Core Competencies -> Goal: Compare -> Viz: Chart.js Radar Chart -> Interaction: Hover -> Justification: Quick visual summary.
-        - Report Info: Professional Experience -> Goal: Inform & Engage -> Viz: Interactive timeline + Inline AI feature -> Interaction: Click tabs for details; click '✨' icon to call Gemini API and display results inline -> Justification: More seamless and less intimidating than a modal.
-        - Report Info: Personal Projects -> Goal: Demonstrate & Engage -> Viz: Expandable cards with embedded demos -> Interaction: Click to expand/collapse and interact with demos -> Justification: Makes demos instantly accessible and showcases functionality without pop-ups. No SVG/Mermaid used. -->
+        - Report Info: My Approach -> Goal: Inform -> Viz: 3-column card layout with custom SVG icon -> Interaction: Hover scale effect -> Justification: Clearly presents core philosophies. The custom SVG for "Systems Thinker" provides unique branding.
+        - Report Info: Career Journey -> Goal: Organize & Inform -> Viz: Single-tabbed interface with inline AI feature -> Interaction: Click to call Gemini API and display results inline -> Justification: Removes clutter and adds a valuable, interactive AI-powered utility directly within the experience flow.
+        - Report Info: Projects -> Goal: Demonstrate & Engage -> Viz: Expandable cards with embedded, live Gemini-powered demo -> Interaction: Click "Live Demo" to expand/collapse and interact -> Justification: Makes the AI demo instantly accessible and proves development capability.
+        - Report Info: Core Competencies -> Goal: Compare -> Viz: Responsive Chart/List -> Interaction: On desktop, a Chart.js radar chart. On mobile (<480px), a bar list for readability -> Justification: Ensures data is consumable on all devices. No SVG/Mermaid used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* slate-50 */
-            color: #1e293b; /* slate-800 */
+            background-color: #111827; /* Primary Background */
+            color: #E5E7EB; /* Primary Text */
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            color: #F9FAFB; /* Heading Text */
         }
         .nav-link {
             transition: color 0.3s ease;
         }
         .nav-link:hover, .nav-link.active {
-            color: #f59e0b; /* amber-500 */
-        }
-        .section-title {
-            color: #0f172a; /* slate-900 */
+            color: #2DD4BF; /* Primary Accent */
         }
         .btn-primary {
-            background-color: #f59e0b; /* amber-500 */
-            color: #0f172a; /* slate-900 */
+            background-color: #2DD4BF;
+            color: #111827;
             transition: background-color 0.3s ease;
         }
         .btn-primary:hover {
-            background-color: #d97706; /* amber-600 */
+            background-color: #5eead4; /* Brighter Teal */
         }
-        .btn-primary:disabled {
-            background-color: #fcd34d; /* amber-300 */
-            cursor: not-allowed;
+        .btn-ghost {
+            border: 1px solid #2DD4BF;
+            color: #2DD4BF;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        .chart-container {
-            position: relative;
-            margin: auto;
-            height: 40vh;
-            width: 100%;
-            max-width: 600px;
-            max-height: 400px;
+        .btn-ghost:hover {
+            background-color: #2DD4BF;
+            color: #111827;
         }
-         @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
+        .project-card {
+            background-color: #1F2937; /* Content Background */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px -3px rgba(45, 212, 191, 0.1), 0 4px 6px -2px rgba(45, 212, 191, 0.05);
+        }
+        .demo-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .demo-container.open {
+            max-height: 1000px;
+        }
+        .hamburger-line {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .menu-open .line-1 {
+            transform: translateY(7px) rotate(45deg);
+        }
+        .menu-open .line-2 {
+            opacity: 0;
+        }
+        .menu-open .line-3 {
+            transform: translateY(-7px) rotate(-45deg);
         }
         .spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #f59e0b; /* amber-500 */
+            border: 2px solid #4b5563;
+            border-top: 2px solid #2DD4BF;
             border-radius: 50%;
             width: 16px;
             height: 16px;
@@ -68,193 +90,229 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .timetable-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 4px;
-            font-size: 0.7rem;
-        }
-        .timetable-header, .timetable-slot {
-            padding: 4px;
-            text-align: center;
-            border-radius: 4px;
-        }
-        .timetable-header {
-            font-weight: 600;
-            background-color: #e2e8f0; /* slate-200 */
-        }
-        .timetable-slot {
-            background-color: #f1f5f9; /* slate-100 */
-            min-height: 40px;
-        }
-        .timetable-class {
-            background-color: #fef3c7; /* amber-100 */
-            border: 1px solid #fde68a; /* amber-200 */
-            color: #78350f; /* amber-900 */
-            font-weight: 500;
-        }
-        .demo-container {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
-        .demo-container.open {
-            max-height: 1000px; /* Adjust as needed */
-        }
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Header & Nav -->
-    <header id="header" class="bg-slate-50/80 backdrop-blur-md sticky top-0 z-50">
+    <header id="header" class="bg-[#111827]/80 backdrop-blur-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-slate-800">Karthik Alasakani</a>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#philosophy" class="nav-link font-medium">Philosophy</a>
-                <a href="#experience" class="nav-link font-medium">Experience</a>
+            <a href="#" class="text-xl font-bold text-white">Karthik Alasakani</a>
+            <div class="hidden md:flex items-center space-x-8" id="desktop-nav">
+                <a href="#hero" class="nav-link font-medium">Home</a>
+                <a href="#approach" class="nav-link font-medium">My Approach</a>
+                <a href="#experience" class="nav-link font-medium">Career Journey</a>
                 <a href="#projects" class="nav-link font-medium">Projects</a>
                 <a href="#skills" class="nav-link font-medium">Skills</a>
+                <a href="#contact" class="nav-link font-medium">Contact</a>
             </div>
-             <a href="mailto:karthik.alsakani@gmail.com" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold shadow-sm">Contact Me</a>
+            <div class="md:hidden">
+                <button id="hamburger-btn" class="text-white focus:outline-none">
+                    <div class="w-6 h-6 flex flex-col justify-between">
+                        <span class="hamburger-line line-1 block w-full h-0.5 bg-white"></span>
+                        <span class="hamburger-line line-2 block w-full h-0.5 bg-white"></span>
+                        <span class="hamburger-line line-3 block w-full h-0.5 bg-white"></span>
+                    </div>
+                </button>
+            </div>
         </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#111827] absolute top-full left-0 w-full">
+            <div class="flex flex-col items-center space-y-4 py-4">
+                <a href="#hero" class="nav-link font-medium">Home</a>
+                <a href="#approach" class="nav-link font-medium">My Approach</a>
+                <a href="#experience" class="nav-link font-medium">Career Journey</a>
+                <a href="#projects" class="nav-link font-medium">Projects</a>
+                <a href="#skills" class="nav-link font-medium">Skills</a>
+                <a href="#contact" class="nav-link font-medium">Contact</a>
+            </div>
+        </div>
     </header>
 
-    <main class="container mx-auto px-6 py-12 md:py-20">
+    <main class="container mx-auto px-6">
 
         <!-- Hero Section -->
-        <section id="hero" class="text-center mb-20 md:mb-32">
-            <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 mb-4">L&D Strategist & Systems Builder</h1>
-            <p class="text-lg md:text-xl max-w-3xl mx-auto text-slate-600">
+        <section id="hero" class="text-center py-24 md:py-48">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">Karthik Alasakani</h1>
+            <h2 class="text-2xl md:text-3xl font-normal text-[#2DD4BF] mb-6">L&D Strategist & Systems Builder</h2>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-300 mb-8">
                 Transforming learning through scalable, AI-first systems. I bridge the gap between academic theory and practical, performance-driven training solutions.
             </p>
+            <div class="flex justify-center gap-4">
+                <a href="#projects" class="btn-primary px-6 py-3 rounded-lg font-bold text-lg">View My Projects</a>
+                <a href="#contact" class="btn-ghost px-6 py-3 rounded-lg font-bold text-lg">Get In Touch</a>
+            </div>
         </section>
 
-        <!-- Philosophy Section -->
-        <section id="philosophy" class="mb-20 md:mb-32">
-            <h2 class="section-title text-3xl font-bold text-center mb-12">My Approach</h2>
-             <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-slate-600">This section outlines my core mindset, which aligns directly with the values of modern, impactful L&D. I believe in building systems, leveraging technology, and focusing on measurable outcomes to foster genuine growth and performance enhancement.</p>
-            </div>
+        <!-- My Approach Section -->
+        <section id="approach" class="py-24">
+            <h2 class="section-title text-3xl font-bold text-center mb-16">My Approach</h2>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-3">⚙️</div>
-                    <h3 class="font-semibold text-lg mb-2">Systems Thinker</h3>
-                    <p class="text-slate-600 text-sm">I design L&D initiatives not as one-off events, but as repeatable, scalable systems that integrate seamlessly into the organizational workflow, ensuring consistency and long-term impact.</p>
+                <div class="bg-[#1F2937] p-8 rounded-xl border border-gray-700 text-center">
+                    <div class="flex justify-center mb-4">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="3" stroke="#2DD4BF" stroke-width="1.5"/>
+                            <circle cx="6" cy="7" r="2" stroke="#2DD4BF" stroke-width="1.5"/>
+                            <circle cx="18" cy="7" r="2" stroke="#2DD4BF" stroke-width="1.5"/>
+                            <circle cx="6" cy="17" r="2" stroke="#2DD4BF" stroke-width="1.5"/>
+                            <circle cx="18" cy="17" r="2" stroke="#2DD4BF" stroke-width="1.5"/>
+                            <path d="M10.5 10.5L7.5 8.5" stroke="#2DD4BF" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M13.5 10.5L16.5 8.5" stroke="#2DD4BF" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M10.5 13.5L7.5 15.5" stroke="#2DD4BF" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M13.5 13.5L16.5 15.5" stroke="#2DD4BF" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Systems Thinker</h3>
+                    <p class="text-gray-400">I design L&D initiatives not as one-off events, but as repeatable, scalable systems that integrate seamlessly into the organizational workflow, ensuring consistency and long-term impact.</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-3">🤖</div>
-                    <h3 class="font-semibold text-lg mb-2">AI-First Innovator</h3>
-                    <p class="text-slate-600 text-sm">I actively build with and champion AI tools to create smarter, more personalized, and efficient learning experiences, moving beyond adoption to genuine application development.</p>
+                <div class="bg-[#1F2937] p-8 rounded-xl border border-gray-700 text-center">
+                    <div class="text-5xl mb-3">🤖</div>
+                    <h3 class="font-bold text-xl mb-2">AI-First Innovator</h3>
+                    <p class="text-gray-400">I actively build with and champion AI tools to create smarter, more personalized, and efficient learning experiences, moving beyond adoption to genuine application development.</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div class="text-3xl mb-3">🎯</div>
-                    <h3 class="font-semibold text-lg mb-2">Execution-Focused</h3>
-                    <p class="text-slate-600 text-sm">My focus is on practical execution and delivering tangible results. I translate high-level strategy into actionable plans and meticulously manage them to completion and beyond.</p>
+                <div class="bg-[#1F2937] p-8 rounded-xl border border-gray-700 text-center">
+                    <div class="text-5xl mb-3">🎯</div>
+                    <h3 class="font-bold text-xl mb-2">Execution-Focused</h3>
+                    <p class="text-gray-400">My focus is on practical execution and delivering tangible results. I translate high-level strategy into actionable plans and meticulously manage them to completion and beyond.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Experience Section -->
-        <section id="experience" class="mb-20 md:mb-32">
-            <h2 class="section-title text-3xl font-bold text-center mb-12">Career Journey</h2>
-             <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-slate-600">This timeline highlights my professional roles. My time as Assistant Dean at Joy University was a pivotal experience where I functioned as a de-facto L&D systems architect, laying the groundwork for the institution's entire training and operational infrastructure. Click a role to see the details.</p>
-            </div>
+        <!-- Career Journey Section -->
+        <section id="experience" class="py-24">
+            <h2 class="section-title text-3xl font-bold text-center mb-16">Career Journey</h2>
             <div id="experience-container" class="max-w-4xl mx-auto">
                 <!-- JS will populate this section -->
             </div>
         </section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="mb-20 md:mb-32">
-            <h2 class="section-title text-3xl font-bold text-center mb-12">Personal Projects Showcase</h2>
-            <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-slate-600">I believe in learning by building. These projects are tangible proof of my ability to design and execute complex, end-to-end solutions that solve real-world problems. They demonstrate my passion for technology, product thinking, and user-centric design.</p>
-            </div>
+        <!-- Projects Showcase Section -->
+        <section id="projects" class="py-24">
+            <h2 class="section-title text-3xl font-bold text-center mb-16">Projects Showcase</h2>
             <div class="grid md:grid-cols-2 gap-8" id="projects-grid">
                 <!-- JS will populate this section -->
             </div>
         </section>
 
-        <!-- Skills Section -->
-        <section id="skills" class="mb-20 md:mb-32">
-            <h2 class="section-title text-3xl font-bold text-center mb-12">Core Competencies</h2>
-             <div class="text-center max-w-2xl mx-auto mb-12">
-                <p class="text-slate-600">This visualization provides a holistic view of my skill set, blending strategic L&D capabilities with deep technical and analytical expertise. This unique combination allows me to not only design training but also to build the systems and analyze the data that make it effective.</p>
+        <!-- Core Competencies Section -->
+        <section id="skills" class="py-24">
+            <h2 class="section-title text-3xl font-bold text-center mb-16">Core Competencies</h2>
+            <div id="skills-container" class="max-w-4xl mx-auto">
+                <div class="chart-container hidden sm:block">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+                <div id="skills-list" class="sm:hidden bg-[#1F2937] p-6 rounded-xl border border-gray-700">
+                    <!-- JS will populate this list on mobile -->
+                </div>
             </div>
-            <div class="chart-container">
-                <canvas id="skillsChart"></canvas>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 text-center">
+            <h2 class="section-title text-3xl font-bold mb-4">Let's Connect</h2>
+            <p class="max-w-2xl mx-auto text-gray-300 mb-8">I'm always open to discussing new projects, creative ideas, or opportunities to be part of an ambitious team. Feel free to reach out.</p>
+            <div class="flex justify-center items-center gap-8 mb-12">
+                <a href="mailto:karthik.alsakani@gmail.com" class="flex items-center gap-2 text-[#2DD4BF] hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    Email
+                </a>
+                <a href="https://www.linkedin.com/in/dr-alasakani-karthik-17054384/" target="_blank" class="flex items-center gap-2 text-[#2DD4BF] hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    LinkedIn
+                </a>
             </div>
+            <form id="contact-form" class="max-w-xl mx-auto text-left">
+                 <input type="hidden" name="access_key" value="a5097ab4-50ac-423d-9418-758d6cb7019f">
+                <div class="mb-4">
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-300">Name</label>
+                    <input type="text" id="name" name="name" class="w-full p-3 bg-[#1F2937] border border-gray-600 rounded-lg focus:ring-[#2DD4BF] focus:border-[#2DD4BF]" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block mb-2 text-sm font-medium text-gray-300">Email</label>
+                    <input type="email" id="email" name="email" class="w-full p-3 bg-[#1F2937] border border-gray-600 rounded-lg focus:ring-[#2DD4BF] focus:border-[#2DD4BF]" required>
+                </div>
+                <div class="mb-6">
+                    <label for="message" class="block mb-2 text-sm font-medium text-gray-300">Message</label>
+                    <textarea id="message" name="message" rows="4" class="w-full p-3 bg-[#1F2937] border border-gray-600 rounded-lg focus:ring-[#2DD4BF] focus:border-[#2DD4BF]" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-full py-3 rounded-lg font-bold">Send Message</button>
+                 <div id="form-status" class="mt-4 text-center"></div>
+            </form>
         </section>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-200 text-center py-6">
-        <p class="text-slate-600">Designed & Built by Karthik Alasakani | 2025</p>
+    <footer class="bg-[#1F2937] text-center py-6 border-t border-gray-700">
+        <p class="text-gray-400">Designed & Built by Karthik Alasakani | 2025</p>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const appData = {
-                experience: [
-                    {
-                        role: "Assistant Dean & Project Lead",
-                        company: "Joy University",
-                        duration: "Sep 2022 – Dec 2024",
-                        description: "Spearheaded the design and end-to-end implementation of the university's core Learning Management System (LMS/ERP), creating a productised and scalable training infrastructure for all non-sales (faculty) teams.",
-                        points: [
-                            "<strong>Onboarding & OJT Excellence:</strong> Engineered and delivered a comprehensive onboarding and structured on-the-job training (OJT) program for 50+ new faculty members on the new technology stack, ensuring rapid, effective adoption and performance readiness.",
-                            "<strong>Instructional Design & Productisation:</strong> Functioned as the lead Instructional Designer for core university policies, breaking down complex requirements into clear, structured, and effective regulatory frameworks. This work was foundational to creating repeatable and consistent operational guides.",
-                            "<strong>Individual Development & Needs Analysis:</strong> Drove faculty growth by organizing targeted Faculty Development Programmes (FDPs) based on identified skill gaps, directly analogous to implementing and supporting Individual Development Plans (IDPs).",
-                            "<strong>Impact Measurement:</strong> Established and managed the system for tracking faculty engagement and performance within the new LMS, creating a direct link between training efforts and operational outcomes. Used Google Sheets extensively for progress mapping and data analysis.",
-                            "<strong>Stakeholder Coordination:</strong> Led all cross-functional communication and coordination between university leadership, departmental deans, faculty members, and external software vendors to ensure seamless planning and execution of the institution-wide rollout."
-                        ]
-                    },
-                    {
-                        role: "Assistant Professor",
-                        company: "Siddhartha Academy of Higher Education",
-                        duration: "Jan 2025 – Present",
-                        description: "Deliver structured training and instruction to postgraduate and undergraduate students, honing skills in curriculum delivery and learner engagement.",
-                        points: [
-                            "Instructing graduate and undergraduate courses with a focus on clear communication of complex topics.",
-                            "Mentoring students, providing guidance on their academic and career paths.",
-                            "Contributing to departmental curriculum development discussions."
-                        ]
-                    }
-                ],
+                experience: {
+                    role: "Assistant Dean & Project Lead",
+                    company: "Joy University",
+                    duration: "Sep 2022 – Dec 2024",
+                    description: "Spearheaded the design and end-to-end implementation of the university's core Learning Management System (LMS/ERP), creating a productised and scalable training infrastructure for all non-sales (faculty) teams.",
+                    points: [
+                        "<strong>Onboarding & OJT Excellence:</strong> Engineered and delivered a comprehensive onboarding and structured on-the-job training (OJT) program for 50+ new faculty members on the new technology stack, ensuring rapid, effective adoption and performance readiness.",
+                        "<strong>Instructional Design & Productisation:</strong> Functioned as the lead Instructional Designer for core university policies, breaking down complex requirements into clear, structured, and effective regulatory frameworks. This work was foundational to creating repeatable and consistent operational guides.",
+                        "<strong>Individual Development & Needs Analysis:</strong> Drove faculty growth by organizing targeted Faculty Development Programmes (FDPs) based on identified skill gaps, directly analogous to implementing and supporting Individual Development Plans (IDPs).",
+                        "<strong>Impact Measurement:</strong> Established and managed the system for tracking faculty engagement and performance within the new LMS, creating a direct link between training efforts and operational outcomes. Used Google Sheets extensively for progress mapping and data analysis.",
+                        "<strong>Stakeholder Coordination:</strong> Led all cross-functional communication and coordination between university leadership, departmental deans, faculty members, and external software vendors to ensure seamless planning and execution of the institution-wide rollout."
+                    ]
+                },
                 projects: [
                     {
                         id: 'acadia-plan',
                         title: "AcadiaPlan",
                         subtitle: "Intelligent University Timetabler",
-                        description: "Architected and built a full-stack web application to solve the complex Constraint Satisfaction Problem (CSP) of university timetabling, demonstrating end-to-end product development.",
+                        description: "Architected and built a full-stack web application to solve the complex Constraint Satisfaction Problem (CSP) of university timetabling.",
                         tags: ["React", "TailwindCSS", "Systems Design", "Algorithm"],
                         details: `
-                            <h4 class="font-semibold text-lg mb-2">Key Features & Architecture:</h4>
-                            <p class="text-slate-600 mb-4">This project was an exercise in building a complete, productised system from scratch. It handles complex data inputs, rule definitions, and uses a custom solver to generate optimized outputs.</p>
-                            <ul class="space-y-2 text-slate-700 text-sm list-disc list-inside mb-6">
-                                <li><strong>Modular Data Setup:</strong> Manage programmes, courses, faculty, and resources through an intuitive, CSV-enabled interface.</li>
-                                <li><strong>Dynamic Constraint Engine:</strong> Define both university-wide rules and custom constraints (e.g., faculty unavailability) with toggle controls.</li>
-                                <li><strong>Two-Step Generation:</strong> An initial automated faculty allocation step followed by a powerful backtracking solver for final timetable generation.</li>
-                            </ul>
                             <div class="demo-container">
-                                <div class="border-t border-slate-200 pt-6">
-                                    <h4 class="font-semibold text-lg mb-2">⚙️ Simulated Demo:</h4>
-                                    <p class="text-slate-600 mb-4 text-sm">This is a simplified simulation of the timetabling process to demonstrate the application's workflow.</p>
-                                    <div class="space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
-                                         <p class="text-sm"><strong>Step 1:</strong> Define inputs and constraints (pre-filled for demo).</p>
-                                         <button id="generate-timetable-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
+                                <div class="border-t border-gray-700 mt-6 pt-6">
+                                    <h4 class="font-bold text-lg mb-2 text-white">⚙️ Simulated Demo:</h4>
+                                    <p class="text-gray-400 mb-4 text-sm">A simplified simulation of the timetabling process.</p>
+                                    <div class="space-y-4 p-4 bg-[#111827] rounded-lg border border-gray-700">
+                                         <p class="text-sm text-gray-300"><strong>Step 1:</strong> Define inputs and constraints (pre-filled for demo).</p>
+                                         <button id="generate-timetable-btn" class="w-full py-2 rounded-md font-semibold flex items-center justify-center bg-gray-600 text-white hover:bg-gray-500">
                                             <span id="timetable-btn-text">Generate Timetable</span>
                                             <div id="timetable-spinner" class="spinner ml-2 hidden"></div>
                                         </button>
                                         <div id="timetable-output" class="hidden mt-4">
-                                            <p class="text-sm font-semibold mb-2"><strong>Step 2:</strong> Review Generated Timetable (Sample Output)</p>
-                                            <div class="timetable-grid p-2 bg-white rounded-md">
-                                                <div class="timetable-header">Time</div><div class="timetable-header">Mon</div><div class="timetable-header">Tue</div><div class="timetable-header">Wed</div><div class="timetable-header">Thu</div><div class="timetable-header">Fri</div>
-                                                <div class="timetable-header">9-10</div><div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div>
-                                                <div class="timetable-header">10-11</div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div><div class="timetable-slot"></div>
-                                                <div class="timetable-header">11-12</div><div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div><div class="timetable-slot"></div><div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div>
+                                            <p class="text-sm font-semibold mb-2 text-gray-300"><strong>Step 2:</strong> Review Generated Timetable</p>
+                                            <div class="p-2 bg-[#1F2937] rounded-md overflow-x-auto">
+                                                <div class="grid grid-cols-6 gap-1 text-xs text-center">
+                                                    <div class="font-bold p-2 bg-gray-700 rounded-tl-md">Time</div>
+                                                    <div class="font-bold p-2 bg-gray-700">Mon</div>
+                                                    <div class="font-bold p-2 bg-gray-700">Tue</div>
+                                                    <div class="font-bold p-2 bg-gray-700">Wed</div>
+                                                    <div class="font-bold p-2 bg-gray-700">Thu</div>
+                                                    <div class="font-bold p-2 bg-gray-700 rounded-tr-md">Fri</div>
+
+                                                    <div class="font-bold p-2 bg-gray-700">9-10</div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">CS101<br><span class="text-teal-300">RM-A</span></div>
+                                                    <div class="p-2 bg-gray-800"></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">MA201<br><span class="text-teal-300">RM-B</span></div>
+                                                    <div class="p-2 bg-gray-800"></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">CS101<br><span class="text-teal-300">RM-A</span></div>
+
+                                                    <div class="font-bold p-2 bg-gray-700">10-11</div>
+                                                    <div class="p-2 bg-gray-800"></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">PH102<br><span class="text-teal-300">RM-C</span></div>
+                                                    <div class="p-2 bg-gray-800"></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">MA201<br><span class="text-teal-300">RM-B</span></div>
+                                                    <div class="p-2 bg-gray-800"></div>
+                                                    
+                                                    <div class="font-bold p-2 bg-gray-700 rounded-bl-md">11-12</div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">EE101<br><span class="text-teal-300">RM-D</span></div>
+                                                    <div class="p-2 bg-gray-800"></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">PH102<br><span class="text-teal-300">RM-C</span></div>
+                                                    <div class="p-2 bg-gray-800"></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded-br-md">EE101<br><span class="text-teal-300">RM-D</span></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -266,29 +324,27 @@
                         id: 'profile-press',
                         title: "ProfilePress AI",
                         subtitle: "AI-Powered Career Translator",
-                        description: "Designed and developed a proof-of-concept web application using the Gemini API to help professionals translate their experience for new career paths.",
-                        tags: ["Generative AI", "Gemini API", "React", "HR-Tech"],
+                        description: "Developed a proof-of-concept web app using the Gemini API to help professionals translate their experience for new career paths.",
+                        tags: ["Generative AI", "Gemini API", "HR-Tech"],
                         details: `
-                            <h4 class="font-semibold text-lg mb-2">Key Features & Architecture:</h4>
-                            <p class="text-slate-600 mb-4">This project demonstrates a proactive, innovation-focused mindset by solving a real-world problem in professional development. It's not just about using AI, but building with it.</p>
                             <div class="demo-container">
-                                <div class="border-t border-slate-200 pt-6">
-                                    <h4 class="font-semibold text-lg mb-2">✨ Live Gemini API Demo:</h4>
-                                    <p class="text-slate-600 mb-4 text-sm">Try the live demo below to see how it rephrases resume points for a target role.</p>
-                                    <div class="space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                <div class="border-t border-gray-700 mt-6 pt-6">
+                                    <h4 class="font-bold text-lg mb-2 text-white">✨ Live Gemini API Demo:</h4>
+                                    <p class="text-gray-400 mb-4 text-sm">See how it rephrases resume points for a target role.</p>
+                                    <div class="space-y-4 p-4 bg-[#111827] rounded-lg border border-gray-700">
                                         <div>
-                                            <label for="raw-exp" class="block text-sm font-medium text-slate-700 mb-1">Your Raw Experience:</label>
-                                            <textarea id="raw-exp" rows="3" class="w-full p-2 border rounded-md bg-white">Developed new course curriculum and syllabi.</textarea>
+                                            <label for="raw-exp" class="block text-sm font-medium text-gray-300 mb-1">Raw Experience:</label>
+                                            <textarea id="raw-exp" rows="3" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]">Developed new course curriculum and syllabi.</textarea>
                                         </div>
                                         <div>
-                                            <label for="target-role" class="block text-sm font-medium text-slate-700 mb-1">Target Role:</label>
-                                            <input type="text" id="target-role" class="w-full p-2 border rounded-md bg-white" value="Project Manager">
+                                            <label for="target-role" class="block text-sm font-medium text-gray-300 mb-1">Target Role:</label>
+                                            <input type="text" id="target-role" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]" value="Project Manager">
                                         </div>
-                                        <button id="translate-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
+                                        <button id="translate-btn" class="w-full py-2 rounded-md font-semibold flex items-center justify-center bg-gray-600 text-white hover:bg-gray-500">
                                             <span id="translate-btn-text">Translate with AI</span>
                                             <div id="translate-spinner" class="spinner ml-2 hidden"></div>
                                         </button>
-                                        <div id="ai-output" class="hidden mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg"></div>
+                                        <div id="ai-output" class="hidden mt-4 p-4 bg-teal-900/20 border-l-4 border-[#2DD4BF] rounded-r-lg"></div>
                                     </div>
                                 </div>
                             </div>
@@ -303,7 +359,7 @@
 
             // --- Gemini API Call Function ---
             async function callGemini(prompt) {
-                const apiKey = "AIzaSyDOvUrKmJTKy5hfBkcIHFbxC-MymYGCwJE"; 
+                const apiKey = "AIzaSyDOvUrKmJTKy5hfBkcIHFbxC-MymYGCwJE"; // IMPORTANT: Replace with your actual Google AI API key
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                 
                 let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
@@ -317,7 +373,7 @@
                     });
 
                     if (!response.ok) {
-                        return `Error: API request failed with status ${response.status}. Please try again.`;
+                        return `<p class="text-red-400">Error: API request failed. Please ensure your API key is valid.</p>`;
                     }
 
                     const result = await response.json();
@@ -327,79 +383,47 @@
                         result.candidates[0].content.parts.length > 0) {
                         return result.candidates[0].content.parts[0].text;
                     } else {
-                        return "Error: Could not retrieve a valid response from the AI. The response structure might have changed.";
+                        return `<p class="text-red-400">Error: Could not retrieve a valid response from the AI.</p>`;
                     }
                 } catch (error) {
-                    return `Error: An unexpected error occurred: ${error.message}. Check your network connection.`;
+                    return `<p class="text-red-400">Error: An unexpected error occurred. Check network connection.</p>`;
                 }
             }
             
             // --- Experience Section ---
             const experienceContainer = document.getElementById('experience-container');
-            let activeExperienceTab = 0;
-
-            function renderExperience() {
-                experienceContainer.innerHTML = `
-                    <div class="flex flex-col gap-4">
-                        <div class="flex border-b border-slate-200 overflow-x-auto">
-                            ${appData.experience.map((exp, index) => `
-                                <button data-index="${index}" class="experience-tab text-left whitespace-nowrap py-3 px-4 font-medium -mb-px transition-colors duration-200 ${index === activeExperienceTab ? 'text-amber-500 border-b-2 border-amber-500' : 'text-slate-500 border-b-2 border-transparent hover:border-slate-300'}">
-                                    ${exp.role}
-                                </button>
-                            `).join('')}
-                        </div>
-                        <div id="experience-details" class="flex-1"></div>
-                    </div>
-                `;
-                renderExperienceDetails();
-                experienceContainer.querySelectorAll('.experience-tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        activeExperienceTab = parseInt(e.currentTarget.dataset.index);
-                        renderExperience();
-                    });
-                });
-            }
-
-            function renderExperienceDetails() {
-                const detailsContainer = document.getElementById('experience-details');
-                const exp = appData.experience[activeExperienceTab];
-                detailsContainer.innerHTML = `
-                    <div class="p-4 bg-white rounded-xl shadow-sm border border-slate-200">
-                        <h3 class="text-xl font-bold text-slate-800">${exp.role}</h3>
-                        <p class="text-amber-600 font-semibold mb-2">${exp.company}</p>
-                        <p class="text-sm text-slate-500 mb-4">${exp.duration}</p>
-                        <p class="italic text-slate-600 mb-4">${exp.description}</p>
-                        <ul class="space-y-3 text-sm text-slate-700">
-                            ${exp.points.map((point, index) => `
-                                <li class="flex items-start group relative">
-                                    <span class="text-amber-500 mr-2 mt-1">◆</span>
-                                    <span class="flex-1">${point}</span>
-                                    <button class="generate-interview-btn ml-2 text-xs text-amber-600 hover:text-amber-800 font-semibold" title="Generate Interview Question">✨ Prep</button>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </div>
-                `;
-                addInterviewPrepEventListeners();
-            }
-
-            renderExperience();
+            const exp = appData.experience;
+            experienceContainer.innerHTML = `
+                <div class="bg-[#1F2937] p-6 rounded-xl border border-gray-700">
+                    <h3 class="text-xl font-bold text-white">${exp.role}</h3>
+                    <p class="text-[#2DD4BF] font-semibold mb-2">${exp.company}</p>
+                    <p class="text-sm text-gray-400 mb-4">${exp.duration}</p>
+                    <p class="italic text-gray-300 mb-6">${exp.description}</p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        ${exp.points.map(point => `
+                            <li class="flex items-start group">
+                                <span class="text-[#2DD4BF] mr-2 mt-1">◆</span>
+                                <span class="flex-1">${point}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
 
             // --- Projects Section ---
             const projectsGrid = document.getElementById('projects-grid');
-            
             projectsGrid.innerHTML = appData.projects.map(p => `
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="project-card p-6 rounded-xl border border-gray-700 flex flex-col">
                     <div id="${p.id}-card">
                         <h3 class="font-bold text-xl mb-1">${p.title}</h3>
-                        <p class="text-amber-600 font-semibold mb-3">${p.subtitle}</p>
-                        <p class="text-slate-600 text-sm mb-4 flex-grow">${p.description}</p>
+                        <p class="text-[#2DD4BF] font-semibold mb-3">${p.subtitle}</p>
+                        <p class="text-gray-400 text-sm mb-4 flex-grow">${p.description}</p>
                         <div class="flex flex-wrap gap-2 mb-6">
-                            ${p.tags.map(tag => `<span class="bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
+                            ${p.tags.map(tag => `<span class="bg-gray-700 text-gray-300 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
                         </div>
                         <div class="mt-auto">${p.details}</div>
                     </div>
-                     <button data-project-id="${p.id}" class="toggle-demo-btn mt-4 w-full text-center py-2 px-4 rounded-lg bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition">Show Demo</button>
+                     <button data-project-id="${p.id}" class="toggle-demo-btn mt-4 w-full text-center py-2 px-4 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-600 transition">Live Demo</button>
                 </div>
             `).join('');
             
@@ -412,7 +436,7 @@
                 btn.addEventListener('click', () => {
                     const isOpen = demoContainer.classList.contains('open');
                     demoContainer.classList.toggle('open');
-                    btn.textContent = isOpen ? 'Show Demo' : 'Hide Demo';
+                    btn.textContent = isOpen ? 'Live Demo' : 'Hide Demo';
                 });
             });
 
@@ -465,88 +489,163 @@
                     }, 1200);
                 });
             }
-
-            // --- Interview Prep AI Logic ---
-            function addInterviewPrepEventListeners() {
-                document.querySelectorAll('.generate-interview-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const li = e.currentTarget.closest('li');
-                        let prepContainer = li.nextElementSibling;
-                        
-                        // Remove existing prep container if it's there
-                        if (prepContainer && prepContainer.classList.contains('prep-container')) {
-                            prepContainer.remove();
-                            return;
-                        }
-                        
-                        // Create and insert new prep container
-                        prepContainer = document.createElement('li');
-                        prepContainer.className = 'prep-container mt-2 mb-4 ml-6';
-                        prepContainer.innerHTML = '<div class="flex items-center p-4 bg-slate-50 rounded-lg"><div class="spinner"></div><p class="ml-4 text-slate-600">Generating question...</p></div>';
-                        li.insertAdjacentElement('afterend', prepContainer);
-
-                        const achievementText = e.currentTarget.previousElementSibling.textContent;
-                        const prompt = `You are an expert interviewer. Based on this resume achievement: "${achievementText}", generate one challenging behavioral interview question and then draft a sample answer using the STAR method. The question should start with "Tell me about a time when...". Format the entire response in clean HTML with headings for the question and each STAR component (Situation, Task, Action, Result). Do not wrap the response in markdown code fences.`;
-
-                        const result = await callGemini(prompt);
-                        const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
-                        prepContainer.innerHTML = `<div class="p-4 bg-slate-50 rounded-lg border-l-4 border-amber-400">${cleanedResult}</div>`;
-                    });
-                });
-            }
             
-            // --- Skills Chart ---
-            const ctx = document.getElementById('skillsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: appData.skills.labels,
-                    datasets: [{
-                        label: 'Proficiency',
-                        data: appData.skills.data,
-                        backgroundColor: 'rgba(245, 158, 11, 0.2)', // amber-500
-                        borderColor: 'rgb(245, 158, 11)',
-                        pointBackgroundColor: 'rgb(245, 158, 11)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(245, 158, 11)'
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(30, 41, 59, 0.1)' },
-                            grid: { color: 'rgba(30, 41, 59, 0.1)' },
-                            pointLabels: { 
-                                font: { size: 12, weight: '500' },
-                                color: '#334155' // slate-700
+            // --- Skills Chart & List ---
+            const skillsChartContainer = document.querySelector('.chart-container');
+            const skillsListContainer = document.getElementById('skills-list');
+            const skillsData = appData.skills;
+
+            function renderSkills() {
+                if (window.innerWidth < 480) {
+                    skillsChartContainer.style.display = 'none';
+                    skillsListContainer.style.display = 'block';
+                    skillsListContainer.innerHTML = `
+                        <ul class="space-y-4">
+                            ${skillsData.labels.map((label, index) => `
+                                <li>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-base font-medium text-gray-300">${label}</span>
+                                        <span class="text-sm font-medium text-gray-400">${skillsData.data[index]}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                                        <div class="bg-[#2DD4BF] h-2.5 rounded-full" style="width: ${skillsData.data[index]}%"></div>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                } else {
+                    skillsChartContainer.style.display = 'block';
+                    skillsListContainer.style.display = 'none';
+                    const ctx = document.getElementById('skillsChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: skillsData.labels,
+                            datasets: [{
+                                label: 'Proficiency',
+                                data: skillsData.data,
+                                backgroundColor: 'rgba(45, 212, 191, 0.2)',
+                                borderColor: '#2DD4BF',
+                                pointBackgroundColor: '#2DD4BF',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#2DD4BF'
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    angleLines: { color: 'rgba(229, 231, 235, 0.2)' },
+                                    grid: { color: 'rgba(229, 231, 235, 0.2)' },
+                                    pointLabels: { 
+                                        font: { size: 12, weight: '700' },
+                                        color: '#E5E7EB'
+                                    },
+                                    ticks: {
+                                        backdropColor: 'rgba(31, 41, 55, 0.7)',
+                                        color: '#9CA3AF',
+                                        stepSize: 20
+                                    },
+                                    suggestedMin: 0,
+                                    suggestedMax: 100
+                                }
                             },
-                            ticks: {
-                                backdropColor: 'rgba(248, 250, 252, 0.7)', // slate-50
-                                color: '#64748b', // slate-500
-                                stepSize: 20
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 100
+                            plugins: {
+                                legend: {
+                                   display: false
+                                }
+                            }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                           display: false
-                        }
-                    }
+                    });
                 }
+            }
+            renderSkills();
+            window.addEventListener('resize', renderSkills);
+
+            // --- Navigation Logic ---
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            hamburgerBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                hamburgerBtn.classList.toggle('menu-open');
             });
 
-            // Nav link smooth scroll
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    hamburgerBtn.classList.remove('menu-open');
                 });
+            });
+
+            const sections = document.querySelectorAll('section');
+            const desktopNavLinks = document.querySelectorAll('#desktop-nav a');
+            
+            window.addEventListener('scroll', () => {
+                let current = 'hero';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 60) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                desktopNavLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            // --- Contact Form Logic ---
+            const form = document.getElementById('contact-form');
+            const formStatus = document.getElementById('form-status');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const object = {};
+                formData.forEach((value, key) => {
+                    object[key] = value;
+                });
+                const json = JSON.stringify(object);
+                formStatus.innerHTML = "Sending...";
+                formStatus.className = "mt-4 text-center text-gray-400";
+
+                fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: json
+                    })
+                    .then(async (response) => {
+                        let json = await response.json();
+                        if (response.status == 200) {
+                            formStatus.innerHTML = "Message sent successfully!";
+                            formStatus.className = "mt-4 text-center text-green-500";
+                        } else {
+                            console.log(response);
+                            formStatus.innerHTML = json.message;
+                            formStatus.className = "mt-4 text-center text-red-500";
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        formStatus.innerHTML = "Something went wrong!";
+                        formStatus.className = "mt-4 text-center text-red-500";
+                    })
+                    .then(function() {
+                        form.reset();
+                        setTimeout(() => {
+                            formStatus.innerHTML = "";
+                        }, 5000);
+                    });
             });
 
         });
