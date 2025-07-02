@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alasakani Karthik | L&D Strategist & Systems Builder</title>
+    <title>Karthik Alasakani  | L&D Strategist & Systems Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,6 +83,31 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .timetable-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            font-size: 0.7rem;
+        }
+        .timetable-header, .timetable-slot {
+            padding: 4px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .timetable-header {
+            font-weight: 600;
+            background-color: #e7e5e4; /* stone-200 */
+        }
+        .timetable-slot {
+            background-color: #f5f5f4; /* stone-100 */
+            min-height: 40px;
+        }
+        .timetable-class {
+            background-color: #ccfbf1; /* teal-100 */
+            border: 1px solid #5eead4; /* teal-200 */
+            color: #134e4a; /* teal-900 */
+            font-weight: 500;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -90,7 +115,7 @@
     <!-- Header & Nav -->
     <header id="header" class="bg-stone-100/80 backdrop-blur-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-stone-800">Alasakani Karthik</a>
+            <a href="#" class="text-xl font-bold text-stone-800">Karthik Alasakani </a>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#philosophy" class="nav-link font-medium">Philosophy</a>
                 <a href="#experience" class="nav-link font-medium">Experience</a>
@@ -173,7 +198,7 @@
 
     <!-- Footer -->
     <footer class="bg-stone-200 text-center py-6">
-        <p class="text-stone-600">Designed & Built by Alasakani Karthik | 2025</p>
+        <p class="text-stone-600">Designed & Built by Karthik Alasakani  | 2025</p>
     </footer>
 
     <!-- Modals -->
@@ -231,15 +256,54 @@
                         details: `
                             <h4 class="font-semibold text-lg mb-2">Key Features & Architecture:</h4>
                             <p class="text-stone-600 mb-4">This project was an exercise in building a complete, productised system from scratch. It handles complex data inputs, rule definitions, and uses a custom solver to generate optimized outputs.</p>
-                            <ul class="space-y-2 text-stone-700 text-sm list-disc list-inside">
+                            <ul class="space-y-2 text-stone-700 text-sm list-disc list-inside mb-6">
                                 <li><strong>Modular Data Setup:</strong> Manage programmes, courses, faculty, and resources through an intuitive, CSV-enabled interface.</li>
                                 <li><strong>Dynamic Constraint Engine:</strong> Define both university-wide rules and custom constraints (e.g., faculty unavailability) with toggle controls.</li>
                                 <li><strong>Two-Step Generation:</strong> An initial automated faculty allocation step followed by a powerful backtracking solver for final timetable generation.</li>
                                 <li><strong>Rich Feature Set:</strong> Includes a faculty substitute finder, detailed failure analysis reporting, and PDF/Excel export capabilities.</li>
                             </ul>
-                            <div class="mt-6 p-4 bg-stone-100 rounded-lg">
-                                <h5 class="font-semibold mb-2">Technical Insight:</h5>
-                                <p class="text-sm text-stone-600">The core of the application is a custom backtracking algorithm implemented in a web worker to prevent UI freezing. It uses a rich error reporting object, { valid, reason }, to provide specific, actionable feedback to the user upon failure, a key feature for a complex system.</p>
+                            <div class="border-t border-stone-200 pt-6">
+                                <h4 class="font-semibold text-lg mb-2">⚙️ Simulated Demo:</h4>
+                                <p class="text-stone-600 mb-4 text-sm">This is a simplified simulation of the timetabling process to demonstrate the application's workflow.</p>
+                                <div class="space-y-4 p-4 bg-stone-50 rounded-lg border border-stone-200">
+                                     <p class="text-sm"><strong>Step 1:</strong> Define inputs and constraints (pre-filled for demo).</p>
+                                     <button id="generate-timetable-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
+                                        <span id="timetable-btn-text">Generate Timetable</span>
+                                        <div id="timetable-spinner" class="spinner ml-2 hidden"></div>
+                                    </button>
+                                    <div id="timetable-output" class="hidden mt-4">
+                                        <p class="text-sm font-semibold mb-2"><strong>Step 2:</strong> Review Generated Timetable (Sample Output)</p>
+                                        <div class="timetable-grid p-2 bg-white rounded-md">
+                                            <div class="timetable-header">Time</div>
+                                            <div class="timetable-header">Mon</div>
+                                            <div class="timetable-header">Tue</div>
+                                            <div class="timetable-header">Wed</div>
+                                            <div class="timetable-header">Thu</div>
+                                            <div class="timetable-header">Fri</div>
+                                            
+                                            <div class="timetable-header">9-10</div>
+                                            <div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div>
+                                            <div class="timetable-slot"></div>
+                                            <div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div>
+                                            <div class="timetable-slot"></div>
+                                            <div class="timetable-slot timetable-class">CS101<br><small>RM-A</small></div>
+
+                                            <div class="timetable-header">10-11</div>
+                                            <div class="timetable-slot"></div>
+                                            <div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div>
+                                            <div class="timetable-slot"></div>
+                                            <div class="timetable-slot timetable-class">MA201<br><small>RM-B</small></div>
+                                            <div class="timetable-slot"></div>
+                                            
+                                            <div class="timetable-header">11-12</div>
+                                            <div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div>
+                                            <div class="timetable-slot"></div>
+                                            <div class="timetable-slot timetable-class">PH102<br><small>RM-C</small></div>
+                                            <div class="timetable-slot"></div>
+                                            <div class="timetable-slot timetable-class">EE101<br><small>RM-D</small></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         `
                     },
@@ -394,6 +458,12 @@
                 btn.addEventListener('click', e => {
                     const projectId = e.currentTarget.dataset.projectId;
                     document.getElementById(`${projectId}-modal`).style.display = 'flex';
+                    // Add event listeners for demos inside the opened modal
+                    if (projectId === 'profile-press') {
+                        addProfilePressDemoLogic();
+                    } else if (projectId === 'acadia-plan') {
+                        addAcadiaPlanDemoLogic();
+                    }
                 });
             });
 
@@ -405,31 +475,57 @@
             });
 
              // --- Live AI Demo Logic ---
-            const translateBtn = document.getElementById('translate-btn');
-            if (translateBtn) {
-                translateBtn.addEventListener('click', async () => {
-                    const outputDiv = document.getElementById('ai-output');
-                    const btnText = document.getElementById('translate-btn-text');
-                    const spinner = document.getElementById('translate-spinner');
-                    const rawExp = document.getElementById('raw-exp').value;
-                    const targetRole = document.getElementById('target-role').value;
+            function addProfilePressDemoLogic() {
+                const translateBtn = document.getElementById('translate-btn');
+                if (translateBtn) {
+                    translateBtn.onclick = async () => {
+                        const outputDiv = document.getElementById('ai-output');
+                        const btnText = document.getElementById('translate-btn-text');
+                        const spinner = document.getElementById('translate-spinner');
+                        const rawExp = document.getElementById('raw-exp').value;
+                        const targetRole = document.getElementById('target-role').value;
 
-                    btnText.textContent = 'Generating...';
-                    spinner.classList.remove('hidden');
-                    translateBtn.disabled = true;
-                    outputDiv.classList.add('hidden');
+                        btnText.textContent = 'Generating...';
+                        spinner.classList.remove('hidden');
+                        translateBtn.disabled = true;
+                        outputDiv.classList.add('hidden');
 
-                    const prompt = `You are an expert career coach. Rewrite the following resume bullet point: "${rawExp}" to be more impactful for a "${targetRole}" position. Provide 3 distinct options, starting each with a strong action verb and quantifying the achievement. Your response must be ONLY an HTML unordered list (<ul>...</ul>) and nothing else. Do not include any introductory text or markdown formatting.`;
-                    
-                    const result = await callGemini(prompt);
-                    const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
-                    
-                    outputDiv.innerHTML = cleanedResult;
-                    outputDiv.classList.remove('hidden');
-                    btnText.textContent = 'Translate with AI';
-                    spinner.classList.add('hidden');
-                    translateBtn.disabled = false;
-                });
+                        const prompt = `You are an expert career coach. Rewrite the following resume bullet point: "${rawExp}" to be more impactful for a "${targetRole}" position. Provide 3 distinct options, starting each with a strong action verb and quantifying the achievement. Your response must be ONLY an HTML unordered list (<ul>...</ul>) and nothing else. Do not include any introductory text or markdown formatting.`;
+                        
+                        const result = await callGemini(prompt);
+                        const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
+                        
+                        outputDiv.innerHTML = cleanedResult;
+                        outputDiv.classList.remove('hidden');
+                        btnText.textContent = 'Translate with AI';
+                        spinner.classList.add('hidden');
+                        translateBtn.disabled = false;
+                    };
+                }
+            }
+
+            // --- AcadiaPlan Demo Logic ---
+            function addAcadiaPlanDemoLogic() {
+                const generateBtn = document.getElementById('generate-timetable-btn');
+                if(generateBtn) {
+                    generateBtn.onclick = () => {
+                        const outputDiv = document.getElementById('timetable-output');
+                        const btnText = document.getElementById('timetable-btn-text');
+                        const spinner = document.getElementById('timetable-spinner');
+
+                        btnText.textContent = 'Solving Constraints...';
+                        spinner.classList.remove('hidden');
+                        generateBtn.disabled = true;
+                        outputDiv.classList.add('hidden');
+
+                        setTimeout(() => {
+                            outputDiv.classList.remove('hidden');
+                            btnText.textContent = 'Generate Timetable';
+                            spinner.classList.add('hidden');
+                            generateBtn.disabled = false;
+                        }, 1200);
+                    };
+                }
             }
 
             // --- Interview Prep AI Logic ---
