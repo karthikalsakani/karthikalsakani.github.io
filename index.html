@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alasakani Karthik | L&D Strategist & Systems Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Stone & Teal -->
+    <!-- Application Structure Plan: A single-page portfolio with thematic sections (Philosophy, Experience, Projects, Skills) accessed via sticky navigation. The structure now incorporates LIVE Gemini API integrations. The "ProfilePress AI" project modal features a real-time resume bullet point translator. A new "Interview Prep" feature has been added to the Experience section, allowing users to click on an achievement and use Gemini to generate a relevant behavioral interview question and a STAR method answer in a modal. This enhances interactivity and demonstrates practical AI application development skills. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Core Competencies -> Goal: Compare -> Viz: Chart.js Radar Chart -> Interaction: Hover -> Justification: Quick visual summary of skill distribution.
+        - Report Info: Professional Experience -> Goal: Inform & Engage -> Viz: Interactive timeline + Live AI feature -> Interaction: Click tabs for details; click '✨' icon to call Gemini API for interview prep -> Justification: Allows deep dive into roles and provides a valuable, AI-powered utility.
+        - Report Info: Personal Projects -> Goal: Demonstrate & Engage -> Viz: Interactive cards with Modals + Live AI Demo -> Interaction: Click to open modal; interact with live Gemini-powered demo -> Justification: Provides tangible proof of building functional AI solutions. No SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+            color: #292524; /* stone-800 */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #0d9488; /* teal-600 */
+        }
+        .section-title {
+            color: #1c1917; /* stone-900 */
+        }
+        .btn-primary {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0f766e; /* teal-700 */
+        }
+        .btn-primary:disabled {
+            background-color: #5eead4; /* teal-300 */
+            cursor: not-allowed;
+        }
+        .modal {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); }
+            to { transform: translateY(0); }
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 40vh;
+            width: 100%;
+            max-width: 600px;
+            max-height: 400px;
+        }
+         @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #0d9488;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Nav -->
+    <header id="header" class="bg-stone-100/80 backdrop-blur-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-stone-800">Alasakani Karthik</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#philosophy" class="nav-link font-medium">Philosophy</a>
+                <a href="#experience" class="nav-link font-medium">Experience</a>
+                <a href="#projects" class="nav-link font-medium">Projects</a>
+                <a href="#skills" class="nav-link font-medium">Skills</a>
+            </div>
+             <a href="mailto:karthik.alsakani@gmail.com" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold shadow-sm">Contact Me</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-20">
+
+        <!-- Hero Section -->
+        <section id="hero" class="text-center mb-20 md:mb-32">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-stone-900 mb-4">L&D Strategist & Systems Builder</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto text-stone-600">
+                Transforming learning through scalable, AI-first systems. I bridge the gap between academic theory and practical, performance-driven training solutions.
+            </p>
+        </section>
+
+        <!-- Philosophy Section -->
+        <section id="philosophy" class="mb-20 md:mb-32">
+            <h2 class="section-title text-3xl font-bold text-center mb-12">My Approach</h2>
+             <div class="text-center max-w-2xl mx-auto mb-12">
+                <p class="text-stone-600">This section outlines my core mindset, which aligns directly with the values of modern, impactful L&D. I believe in building systems, leveraging technology, and focusing on measurable outcomes to foster genuine growth and performance enhancement.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="text-3xl mb-3">⚙️</div>
+                    <h3 class="font-semibold text-lg mb-2">Systems Thinker</h3>
+                    <p class="text-stone-600 text-sm">I design L&D initiatives not as one-off events, but as repeatable, scalable systems that integrate seamlessly into the organizational workflow, ensuring consistency and long-term impact.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="text-3xl mb-3">🤖</div>
+                    <h3 class="font-semibold text-lg mb-2">AI-First Innovator</h3>
+                    <p class="text-stone-600 text-sm">I actively build with and champion AI tools to create smarter, more personalized, and efficient learning experiences, moving beyond adoption to genuine application development.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <div class="text-3xl mb-3">🎯</div>
+                    <h3 class="font-semibold text-lg mb-2">Execution-Focused</h3>
+                    <p class="text-stone-600 text-sm">My focus is on practical execution and delivering tangible results. I translate high-level strategy into actionable plans and meticulously manage them to completion and beyond.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="mb-20 md:mb-32">
+            <h2 class="section-title text-3xl font-bold text-center mb-12">Career Journey</h2>
+             <div class="text-center max-w-2xl mx-auto mb-12">
+                <p class="text-stone-600">This timeline highlights my professional roles. My time as Assistant Dean at Joy University was a pivotal experience where I functioned as a de-facto L&D systems architect, laying the groundwork for the institution's entire training and operational infrastructure. Click a role to see the details.</p>
+            </div>
+            <div id="experience-container" class="max-w-4xl mx-auto">
+                <!-- JS will populate this section -->
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="mb-20 md:mb-32">
+            <h2 class="section-title text-3xl font-bold text-center mb-12">Personal Projects Showcase</h2>
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <p class="text-stone-600">I believe in learning by building. These projects are tangible proof of my ability to design and execute complex, end-to-end solutions that solve real-world problems. They demonstrate my passion for technology, product thinking, and user-centric design.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8" id="projects-grid">
+                <!-- JS will populate this section -->
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="mb-20 md:mb-32">
+            <h2 class="section-title text-3xl font-bold text-center mb-12">Core Competencies</h2>
+             <div class="text-center max-w-2xl mx-auto mb-12">
+                <p class="text-stone-600">This visualization provides a holistic view of my skill set, blending strategic L&D capabilities with deep technical and analytical expertise. This unique combination allows me to not only design training but also to build the systems and analyze the data that make it effective.</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-200 text-center py-6">
+        <p class="text-stone-600">Designed & Built by Alasakani Karthik | 2025</p>
+    </footer>
+
+    <!-- Modals -->
+    <div id="project-modal-container"></div>
+    <div id="interview-prep-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="modal-content bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl p-6 md:p-8">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                   <h3 class="font-bold text-2xl">✨ AI Interview Prep</h3>
+                   <p class="text-teal-600 font-semibold">Generated by Gemini</p>
+                </div>
+                <button id="close-interview-modal" class="text-stone-400 hover:text-stone-600">&times;</button>
+            </div>
+            <div id="interview-prep-content"></div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const appData = {
+                experience: [
+                    {
+                        role: "Assistant Dean & Project Lead",
+                        company: "Joy University",
+                        duration: "Sep 2022 – Dec 2024",
+                        description: "Spearheaded the design and end-to-end implementation of the university's core Learning Management System (LMS/ERP), creating a productised and scalable training infrastructure for all non-sales (faculty) teams.",
+                        points: [
+                            "<strong>Onboarding & OJT Excellence:</strong> Engineered and delivered a comprehensive onboarding and structured on-the-job training (OJT) program for 50+ new faculty members on the new technology stack, ensuring rapid, effective adoption and performance readiness.",
+                            "<strong>Instructional Design & Productisation:</strong> Functioned as the lead Instructional Designer for core university policies, breaking down complex requirements into clear, structured, and effective regulatory frameworks. This work was foundational to creating repeatable and consistent operational guides.",
+                            "<strong>Individual Development & Needs Analysis:</strong> Drove faculty growth by organizing targeted Faculty Development Programmes (FDPs) based on identified skill gaps, directly analogous to implementing and supporting Individual Development Plans (IDPs).",
+                            "<strong>Impact Measurement:</strong> Established and managed the system for tracking faculty engagement and performance within the new LMS, creating a direct link between training efforts and operational outcomes. Used Google Sheets extensively for progress mapping and data analysis.",
+                            "<strong>Stakeholder Coordination:</strong> Led all cross-functional communication and coordination between university leadership, departmental deans, faculty members, and external software vendors to ensure seamless planning and execution of the institution-wide rollout."
+                        ]
+                    },
+                    {
+                        role: "Assistant Professor",
+                        company: "Siddhartha Academy of Higher Education",
+                        duration: "Jan 2025 – Present",
+                        description: "Deliver structured training and instruction to postgraduate and undergraduate students, honing skills in curriculum delivery and learner engagement.",
+                        points: [
+                            "Instructing graduate and undergraduate courses with a focus on clear communication of complex topics.",
+                            "Mentoring students, providing guidance on their academic and career paths.",
+                            "Contributing to departmental curriculum development discussions."
+                        ]
+                    }
+                ],
+                projects: [
+                    {
+                        id: 'acadia-plan',
+                        title: "AcadiaPlan",
+                        subtitle: "Intelligent University Timetabler",
+                        description: "Architected and built a full-stack web application to solve the complex Constraint Satisfaction Problem (CSP) of university timetabling, demonstrating end-to-end product development.",
+                        tags: ["React", "TailwindCSS", "Systems Design", "Algorithm"],
+                        details: `
+                            <h4 class="font-semibold text-lg mb-2">Key Features & Architecture:</h4>
+                            <p class="text-stone-600 mb-4">This project was an exercise in building a complete, productised system from scratch. It handles complex data inputs, rule definitions, and uses a custom solver to generate optimized outputs.</p>
+                            <ul class="space-y-2 text-stone-700 text-sm list-disc list-inside">
+                                <li><strong>Modular Data Setup:</strong> Manage programmes, courses, faculty, and resources through an intuitive, CSV-enabled interface.</li>
+                                <li><strong>Dynamic Constraint Engine:</strong> Define both university-wide rules and custom constraints (e.g., faculty unavailability) with toggle controls.</li>
+                                <li><strong>Two-Step Generation:</strong> An initial automated faculty allocation step followed by a powerful backtracking solver for final timetable generation.</li>
+                                <li><strong>Rich Feature Set:</strong> Includes a faculty substitute finder, detailed failure analysis reporting, and PDF/Excel export capabilities.</li>
+                            </ul>
+                            <div class="mt-6 p-4 bg-stone-100 rounded-lg">
+                                <h5 class="font-semibold mb-2">Technical Insight:</h5>
+                                <p class="text-sm text-stone-600">The core of the application is a custom backtracking algorithm implemented in a web worker to prevent UI freezing. It uses a rich error reporting object, { valid, reason }, to provide specific, actionable feedback to the user upon failure, a key feature for a complex system.</p>
+                            </div>
+                        `
+                    },
+                    {
+                        id: 'profile-press',
+                        title: "ProfilePress AI",
+                        subtitle: "AI-Powered Career Translator",
+                        description: "Designed and developed a proof-of-concept web application using the Gemini API to help professionals translate their experience for new career paths.",
+                        tags: ["Generative AI", "Gemini API", "React", "HR-Tech"],
+                        details: `
+                            <h4 class="font-semibold text-lg mb-2">✨ Live Gemini API Demo:</h4>
+                            <p class="text-stone-600 mb-4">This project demonstrates a proactive, innovation-focused mindset by solving a real-world problem in professional development. It's not just about using AI, but building with it. Try the live demo below.</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="raw-exp" class="block text-sm font-medium text-stone-700 mb-1">Your Raw Experience:</label>
+                                    <textarea id="raw-exp" rows="3" class="w-full p-2 border rounded-md bg-stone-50">Supervised the Faculty Course Load Allocation for each School.</textarea>
+                                </div>
+                                <div>
+                                    <label for="target-role" class="block text-sm font-medium text-stone-700 mb-1">Target Role:</label>
+                                    <input type="text" id="target-role" class="w-full p-2 border rounded-md bg-stone-50" value="Project Manager">
+                                </div>
+                                <button id="translate-btn" class="btn-primary w-full py-2 rounded-md font-semibold flex items-center justify-center">
+                                    <span id="translate-btn-text">Translate with AI</span>
+                                    <div id="translate-spinner" class="spinner ml-2 hidden"></div>
+                                </button>
+                                <div id="ai-output" class="hidden mt-4 p-4 bg-teal-50 border-l-4 border-teal-500 rounded-r-lg"></div>
+                            </div>
+                        `
+                    }
+                ],
+                skills: {
+                    labels: ['L&D Strategy', 'Instructional Design', 'AI Application', 'Stakeholder Mgt.', 'Systems Design', 'Data Analysis', 'Project Mgt.'],
+                    data: [90, 85, 95, 90, 95, 80, 85]
+                }
+            };
+
+            // --- Gemini API Call Function ---
+            async function callGemini(prompt) {
+                const apiKey = "AIzaSyCKfBWL4u8jEcWitbxi1DcRFhiW_TMHP5w"; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        return `Error: API request failed with status ${response.status}. Please try again.`;
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        return "Error: Could not retrieve a valid response from the AI. The response structure might have changed.";
+                    }
+                } catch (error) {
+                    return `Error: An unexpected error occurred: ${error.message}. Check your network connection.`;
+                }
+            }
+            
+            // --- Experience Section ---
+            const experienceContainer = document.getElementById('experience-container');
+            let activeExperienceTab = 0;
+
+            function renderExperience() {
+                experienceContainer.innerHTML = `
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="flex md:flex-col overflow-x-auto md:overflow-x-visible border-b md:border-b-0 md:border-r border-stone-200 pr-4 md:pr-8">
+                            ${appData.experience.map((exp, index) => `
+                                <button data-index="${index}" class="experience-tab text-left whitespace-nowrap py-3 md:py-2 px-4 md:px-0 text-stone-500 font-medium ${index === activeExperienceTab ? 'text-teal-600 border-b-2 md:border-b-0 md:border-r-2 border-teal-600' : ''}">
+                                    ${exp.role}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div id="experience-details" class="flex-1"></div>
+                    </div>
+                `;
+                renderExperienceDetails();
+                experienceContainer.querySelectorAll('.experience-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        activeExperienceTab = parseInt(e.currentTarget.dataset.index);
+                        renderExperience();
+                    });
+                });
+            }
+
+            function renderExperienceDetails() {
+                const detailsContainer = document.getElementById('experience-details');
+                const exp = appData.experience[activeExperienceTab];
+                detailsContainer.innerHTML = `
+                    <div class="p-4 bg-white rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-xl font-bold text-stone-800">${exp.role}</h3>
+                        <p class="text-teal-600 font-semibold mb-2">${exp.company}</p>
+                        <p class="text-sm text-stone-500 mb-4">${exp.duration}</p>
+                        <p class="italic text-stone-600 mb-4">${exp.description}</p>
+                        <ul class="space-y-3 text-sm text-stone-700">
+                            ${exp.points.map(point => `
+                                <li class="flex items-start">
+                                    <span class="text-teal-500 mr-2 mt-1">◆</span>
+                                    <span class="flex-1">${point}</span>
+                                    <button class="generate-interview-btn ml-2 text-xs text-teal-600 hover:text-teal-800 font-semibold" title="Generate Interview Question">✨ Prep</button>
+                                </li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                addInterviewPrepEventListeners();
+            }
+
+            renderExperience();
+
+            // --- Projects Section ---
+            const projectsGrid = document.getElementById('projects-grid');
+            const modalContainer = document.getElementById('project-modal-container');
+            
+            projectsGrid.innerHTML = appData.projects.map(p => `
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col">
+                    <h3 class="font-bold text-xl mb-1">${p.title}</h3>
+                    <p class="text-teal-600 font-semibold mb-3">${p.subtitle}</p>
+                    <p class="text-stone-600 text-sm mb-4 flex-grow">${p.description}</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        ${p.tags.map(tag => `<span class="bg-stone-100 text-stone-600 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
+                    </div>
+                    <button data-project-id="${p.id}" class="open-modal-btn mt-auto w-full text-center py-2 px-4 rounded-lg bg-stone-100 text-stone-700 font-semibold hover:bg-stone-200 transition">View Details</button>
+                </div>
+            `).join('');
+
+            modalContainer.innerHTML = appData.projects.map(p => `
+                <div id="${p.id}-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                    <div class="modal-content bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl p-6 md:p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                               <h3 class="font-bold text-2xl">${p.title}</h3>
+                               <p class="text-teal-600 font-semibold">${p.subtitle}</p>
+                            </div>
+                            <button data-project-id="${p.id}" class="close-modal-btn text-stone-400 hover:text-stone-600 text-3xl">&times;</button>
+                        </div>
+                        <div>${p.details}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.open-modal-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    const projectId = e.currentTarget.dataset.projectId;
+                    document.getElementById(`${projectId}-modal`).style.display = 'flex';
+                });
+            });
+
+            document.querySelectorAll('.close-modal-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    const projectId = e.currentTarget.dataset.projectId;
+                    document.getElementById(`${projectId}-modal`).style.display = 'none';
+                });
+            });
+
+             // --- Live AI Demo Logic ---
+            const translateBtn = document.getElementById('translate-btn');
+            if (translateBtn) {
+                translateBtn.addEventListener('click', async () => {
+                    const outputDiv = document.getElementById('ai-output');
+                    const btnText = document.getElementById('translate-btn-text');
+                    const spinner = document.getElementById('translate-spinner');
+                    const rawExp = document.getElementById('raw-exp').value;
+                    const targetRole = document.getElementById('target-role').value;
+
+                    btnText.textContent = 'Generating...';
+                    spinner.classList.remove('hidden');
+                    translateBtn.disabled = true;
+                    outputDiv.classList.add('hidden');
+
+                    const prompt = `You are an expert career coach. Rewrite the following resume bullet point: "${rawExp}" to be more impactful for a "${targetRole}" position. Provide 3 distinct options, starting each with a strong action verb and quantifying the achievement. Format the output as a simple HTML unordered list.`;
+                    
+                    const result = await callGemini(prompt);
+                    
+                    outputDiv.innerHTML = result;
+                    outputDiv.classList.remove('hidden');
+                    btnText.textContent = 'Translate with AI';
+                    spinner.classList.add('hidden');
+                    translateBtn.disabled = false;
+                });
+            }
+
+            // --- Interview Prep AI Logic ---
+            const interviewModal = document.getElementById('interview-prep-modal');
+            const interviewContent = document.getElementById('interview-prep-content');
+            
+            function addInterviewPrepEventListeners() {
+                document.querySelectorAll('.generate-interview-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const achievementText = e.currentTarget.previousElementSibling.textContent;
+                        interviewContent.innerHTML = '<div class="flex justify-center items-center p-8"><div class="spinner"></div><p class="ml-4 text-stone-600">Generating question...</p></div>';
+                        interviewModal.style.display = 'flex';
+
+                        const prompt = `You are an expert interviewer. Based on this resume achievement: "${achievementText}", generate one challenging behavioral interview question and then draft a sample answer using the STAR method. The question should start with "Tell me about a time when...". Format the entire response in clean HTML with headings for the question and each STAR component (Situation, Task, Action, Result).`;
+
+                        const result = await callGemini(prompt);
+                        interviewContent.innerHTML = result;
+                    });
+                });
+            }
+            
+            document.getElementById('close-interview-modal').addEventListener('click', () => {
+                interviewModal.style.display = 'none';
+            });
+
+            // --- Skills Chart ---
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: appData.skills.labels,
+                    datasets: [{
+                        label: 'Proficiency',
+                        data: appData.skills.data,
+                        backgroundColor: 'rgba(13, 148, 136, 0.2)',
+                        borderColor: 'rgb(13, 148, 136)',
+                        pointBackgroundColor: 'rgb(13, 148, 136)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(13, 148, 136)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(41, 37, 36, 0.1)' },
+                            grid: { color: 'rgba(41, 37, 36, 0.1)' },
+                            pointLabels: { 
+                                font: { size: 12, weight: '500' },
+                                color: '#44403c'
+                            },
+                            ticks: {
+                                backdropColor: 'rgba(245, 245, 244, 0.7)',
+                                color: '#78716c',
+                                stepSize: 20
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                           display: false
+                        }
+                    }
+                }
+            });
+
+            // Nav link smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
