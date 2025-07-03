@@ -64,7 +64,7 @@
             transition: max-height 0.5s ease-in-out;
         }
         .demo-container.open {
-            max-height: 1000px;
+            max-height: 1200px; /* Increased for more content */
         }
         .hamburger-line {
             transition: transform 0.3s ease, opacity 0.3s ease;
@@ -89,6 +89,13 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        .demo-tab {
+            transition: all 0.2s ease-in-out;
+        }
+        .demo-tab.active {
+            background-color: #374151; /* gray-700 */
+            color: #F9FAFB; /* white */
         }
     </style>
 </head>
@@ -293,25 +300,25 @@
                                                     <div class="font-bold p-2 bg-gray-700 rounded-tr-md">Fri</div>
 
                                                     <div class="font-bold p-2 bg-gray-700">9-10</div>
-                                                    <div class="p-2 bg-teal-900/50 rounded">CS101<br><span class="text-teal-300">RM-A</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">CS101<br><small class="text-teal-300">RM-A / Dr. Rao</small></div>
                                                     <div class="p-2 bg-gray-800"></div>
-                                                    <div class="p-2 bg-teal-900/50 rounded">MA201<br><span class="text-teal-300">RM-B</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">MA201<br><small class="text-teal-300">RM-B / Dr. Iyer</small></div>
                                                     <div class="p-2 bg-gray-800"></div>
-                                                    <div class="p-2 bg-teal-900/50 rounded">CS101<br><span class="text-teal-300">RM-A</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">CS101<br><small class="text-teal-300">RM-A / Dr. Rao</small></div>
 
                                                     <div class="font-bold p-2 bg-gray-700">10-11</div>
                                                     <div class="p-2 bg-gray-800"></div>
-                                                    <div class="p-2 bg-teal-900/50 rounded">PH102<br><span class="text-teal-300">RM-C</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">PH102<br><small class="text-teal-300">RM-C / Dr. Gupta</small></div>
                                                     <div class="p-2 bg-gray-800"></div>
-                                                    <div class="p-2 bg-teal-900/50 rounded">MA201<br><span class="text-teal-300">RM-B</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">MA201<br><small class="text-teal-300">RM-B / Dr. Iyer</small></div>
                                                     <div class="p-2 bg-gray-800"></div>
                                                     
                                                     <div class="font-bold p-2 bg-gray-700 rounded-bl-md">11-12</div>
-                                                    <div class="p-2 bg-teal-900/50 rounded">EE101<br><span class="text-teal-300">RM-D</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">EE101<br><small class="text-teal-300">RM-D / Dr. Singh</small></div>
                                                     <div class="p-2 bg-gray-800"></div>
-                                                    <div class="p-2 bg-teal-900/50 rounded">PH102<br><span class="text-teal-300">RM-C</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded">PH102<br><small class="text-teal-300">RM-C / Dr. Gupta</small></div>
                                                     <div class="p-2 bg-gray-800"></div>
-                                                    <div class="p-2 bg-teal-900/50 rounded-br-md">EE101<br><span class="text-teal-300">RM-D</span></div>
+                                                    <div class="p-2 bg-teal-900/50 rounded-br-md">EE101<br><span class="text-teal-300">RM-D / Dr. Singh</span></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -323,28 +330,86 @@
                     {
                         id: 'profile-press',
                         title: "ProfilePress AI",
-                        subtitle: "AI-Powered Career Translator",
+                        subtitle: "AI-Powered Career Tools",
                         description: "Developed a proof-of-concept web app using the Gemini API to help professionals translate their experience for new career paths.",
                         tags: ["Generative AI", "Gemini API", "HR-Tech"],
                         details: `
                             <div class="demo-container">
                                 <div class="border-t border-gray-700 mt-6 pt-6">
-                                    <h4 class="font-bold text-lg mb-2 text-white">✨ Live Gemini API Demo:</h4>
-                                    <p class="text-gray-400 mb-4 text-sm">See how it rephrases resume points for a target role.</p>
-                                    <div class="space-y-4 p-4 bg-[#111827] rounded-lg border border-gray-700">
-                                        <div>
-                                            <label for="raw-exp" class="block text-sm font-medium text-gray-300 mb-1">Raw Experience:</label>
-                                            <textarea id="raw-exp" rows="3" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]">Developed new course curriculum and syllabi.</textarea>
+                                    <h4 class="font-bold text-lg mb-4 text-white">✨ Live Gemini API Toolkit</h4>
+                                    <div class="mb-4 p-1 bg-gray-800 rounded-lg flex flex-wrap gap-1" id="demo-tabs-container">
+                                        <button data-tab="translator" class="demo-tab active flex-grow py-1.5 px-2 font-medium text-sm rounded-md">Resume Translator</button>
+                                        <button data-tab="skill-gap" class="demo-tab flex-grow py-1.5 px-2 font-medium text-sm text-gray-400 hover:bg-gray-700 hover:text-white rounded-md">Skill Gap Analyzer</button>
+                                        <button data-tab="onboarding" class="demo-tab flex-grow py-1.5 px-2 font-medium text-sm text-gray-400 hover:bg-gray-700 hover:text-white rounded-md">Onboarding Drafter</button>
+                                        <button data-tab="learning-module" class="demo-tab flex-grow py-1.5 px-2 font-medium text-sm text-gray-400 hover:bg-gray-700 hover:text-white rounded-md">Learning Module Drafter</button>
+                                    </div>
+                                    <div id="translator-content" data-tab-content>
+                                        <p class="text-gray-400 mb-4 text-sm">See how it rephrases resume points for a target role.</p>
+                                        <div class="space-y-4 p-4 bg-[#111827] rounded-lg border border-gray-700">
+                                            <div>
+                                                <label for="raw-exp" class="block text-sm font-medium text-gray-300 mb-1">Raw Experience:</label>
+                                                <textarea id="raw-exp" rows="3" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]">Developed new course curriculum and syllabi.</textarea>
+                                            </div>
+                                            <div>
+                                                <label for="target-role" class="block text-sm font-medium text-gray-300 mb-1">Target Role:</label>
+                                                <input type="text" id="target-role" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]" value="Project Manager">
+                                            </div>
+                                            <button id="translate-btn" class="w-full py-2 rounded-md font-semibold flex items-center justify-center bg-gray-600 text-white hover:bg-gray-500">
+                                                <span id="translate-btn-text">Translate with AI</span>
+                                                <div id="translate-spinner" class="spinner ml-2 hidden"></div>
+                                            </button>
+                                            <div id="ai-output" class="hidden mt-4 p-4 bg-teal-900/20 border-l-4 border-[#2DD4BF] rounded-r-lg"></div>
                                         </div>
-                                        <div>
-                                            <label for="target-role" class="block text-sm font-medium text-gray-300 mb-1">Target Role:</label>
-                                            <input type="text" id="target-role" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]" value="Project Manager">
+                                    </div>
+                                    <div id="skill-gap-content" class="hidden" data-tab-content>
+                                        <p class="text-gray-400 mb-4 text-sm">Identifies skill gaps and suggests learning paths.</p>
+                                        <div class="space-y-4 p-4 bg-[#111827] rounded-lg border border-gray-700">
+                                            <div>
+                                                <label for="my-skills" class="block text-sm font-medium text-gray-300 mb-1">My Skills:</label>
+                                                <textarea id="my-skills" rows="3" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]">Project Management, Curriculum Design, Public Speaking</textarea>
+                                            </div>
+                                            <div>
+                                                <label for="job-desc" class="block text-sm font-medium text-gray-300 mb-1">Target Job Description:</label>
+                                                <textarea id="job-desc" rows="5" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]">Seeking an L&D Specialist with experience in e-learning authoring tools (Articulate 360), video editing, and data analysis with Power BI.</textarea>
+                                            </div>
+                                            <button id="analyze-btn" class="w-full py-2 rounded-md font-semibold flex items-center justify-center bg-gray-600 text-white hover:bg-gray-500">
+                                                <span id="analyze-btn-text">Analyze Skill Gap</span>
+                                                <div id="analyze-spinner" class="spinner ml-2 hidden"></div>
+                                            </button>
+                                            <div id="skill-gap-output" class="hidden mt-4 p-4 bg-teal-900/20 border-l-4 border-[#2DD4BF] rounded-r-lg"></div>
                                         </div>
-                                        <button id="translate-btn" class="w-full py-2 rounded-md font-semibold flex items-center justify-center bg-gray-600 text-white hover:bg-gray-500">
-                                            <span id="translate-btn-text">Translate with AI</span>
-                                            <div id="translate-spinner" class="spinner ml-2 hidden"></div>
-                                        </button>
-                                        <div id="ai-output" class="hidden mt-4 p-4 bg-teal-900/20 border-l-4 border-[#2DD4BF] rounded-r-lg"></div>
+                                    </div>
+                                     <div id="onboarding-content" class="hidden" data-tab-content>
+                                        <p class="text-gray-400 mb-4 text-sm">Generate a structured 30-60-90 day onboarding plan for any role.</p>
+                                        <div class="space-y-4 p-4 bg-[#111827] rounded-lg border border-gray-700">
+                                            <div>
+                                                <label for="onboard-role" class="block text-sm font-medium text-gray-300 mb-1">Job Role to Onboard:</label>
+                                                <input type="text" id="onboard-role" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]" value="Junior Software Engineer">
+                                            </div>
+                                            <button id="draft-plan-btn" class="w-full py-2 rounded-md font-semibold flex items-center justify-center bg-gray-600 text-white hover:bg-gray-500">
+                                                <span id="draft-plan-btn-text">Draft Onboarding Plan</span>
+                                                <div id="draft-plan-spinner" class="spinner ml-2 hidden"></div>
+                                            </button>
+                                            <div id="onboarding-output" class="hidden mt-4 p-4 bg-teal-900/20 border-l-4 border-[#2DD4BF] rounded-r-lg"></div>
+                                        </div>
+                                    </div>
+                                    <div id="learning-module-content" class="hidden" data-tab-content>
+                                        <p class="text-gray-400 mb-4 text-sm">Generate a micro-learning module outline for any topic.</p>
+                                        <div class="space-y-4 p-4 bg-[#111827] rounded-lg border border-gray-700">
+                                            <div>
+                                                <label for="module-topic" class="block text-sm font-medium text-gray-300 mb-1">Learning Topic:</label>
+                                                <input type="text" id="module-topic" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]" value="Introduction to Project Management">
+                                            </div>
+                                            <div>
+                                                <label for="learning-objectives" class="block text-sm font-medium text-gray-300 mb-1">Learning Objectives:</label>
+                                                <textarea id="learning-objectives" rows="3" class="w-full p-2 border border-gray-600 rounded-md bg-[#1F2937]">Understand the project lifecycle. Define key terms like scope, risk, and stakeholder.</textarea>
+                                            </div>
+                                            <button id="draft-module-btn" class="w-full py-2 rounded-md font-semibold flex items-center justify-center bg-gray-600 text-white hover:bg-gray-500">
+                                                <span id="draft-module-btn-text">Draft Module Outline</span>
+                                                <div id="draft-module-spinner" class="spinner ml-2 hidden"></div>
+                                            </button>
+                                            <div id="learning-module-output" class="hidden mt-4 p-4 bg-teal-900/20 border-l-4 border-[#2DD4BF] rounded-r-lg"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -404,11 +469,15 @@
                             <li class="flex items-start group">
                                 <span class="text-[#2DD4BF] mr-2 mt-1">◆</span>
                                 <span class="flex-1">${point}</span>
+                                <button class="generate-interview-btn ml-4 text-xs text-gray-400 hover:text-[#2DD4BF] font-semibold flex items-center gap-1 transition-colors">
+                                    ✨ <span>Prep</span>
+                                </button>
                             </li>
                         `).join('')}
                     </ul>
                 </div>
             `;
+            addInterviewPrepEventListeners();
 
             // --- Projects Section ---
             const projectsGrid = document.getElementById('projects-grid');
@@ -487,6 +556,144 @@
                         spinner.classList.add('hidden');
                         generateBtn.disabled = false;
                     }, 1200);
+                });
+            }
+
+            // --- Skill Gap Analyzer Demo Logic ---
+            const analyzeBtn = document.getElementById('analyze-btn');
+            if (analyzeBtn) {
+                analyzeBtn.addEventListener('click', async () => {
+                    const outputDiv = document.getElementById('skill-gap-output');
+                    const btnText = document.getElementById('analyze-btn-text');
+                    const spinner = document.getElementById('analyze-spinner');
+                    const mySkills = document.getElementById('my-skills').value;
+                    const jobDesc = document.getElementById('job-desc').value;
+
+                    btnText.textContent = 'Analyzing...';
+                    spinner.classList.remove('hidden');
+                    analyzeBtn.disabled = true;
+                    outputDiv.classList.add('hidden');
+
+                    const prompt = `You are an expert L&D strategist. Analyze my skills: "${mySkills}" against this job description: "${jobDesc}". Identify the top 3-5 missing skills. For each missing skill, provide a title and one specific, actionable way to learn it (e.g., a type of online course, a project to build). Format the entire response in clean HTML, using <h4> for the skill title and <p> for the learning suggestion. Do not include any introductory text or markdown formatting.`;
+                    
+                    const result = await callGemini(prompt);
+                    const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
+                    
+                    outputDiv.innerHTML = cleanedResult;
+                    outputDiv.classList.remove('hidden');
+                    btnText.textContent = 'Analyze Skill Gap';
+                    spinner.classList.add('hidden');
+                    analyzeBtn.disabled = false;
+                });
+            }
+            
+            // --- Onboarding Plan Drafter Demo Logic ---
+            const draftPlanBtn = document.getElementById('draft-plan-btn');
+            if (draftPlanBtn) {
+                draftPlanBtn.addEventListener('click', async () => {
+                    const outputDiv = document.getElementById('onboarding-output');
+                    const btnText = document.getElementById('draft-plan-btn-text');
+                    const spinner = document.getElementById('draft-plan-spinner');
+                    const onboardRole = document.getElementById('onboard-role').value;
+
+                    btnText.textContent = 'Drafting...';
+                    spinner.classList.remove('hidden');
+                    draftPlanBtn.disabled = true;
+                    outputDiv.classList.add('hidden');
+
+                    const prompt = `You are an expert L&D strategist. Create a structured 30-60-90 day onboarding plan for a new "${onboardRole}". The plan should have three main sections: "First 30 Days", "Days 31-60", and "Days 61-90". Each section should have a clear goal and 3-5 bullet points with key activities. Format the entire response in clean HTML, using <h4> for the section titles and an unordered list (<ul>) for the activities. Do not include any introductory text or markdown formatting.`;
+                    
+                    const result = await callGemini(prompt);
+                    const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
+                    
+                    outputDiv.innerHTML = cleanedResult;
+                    outputDiv.classList.remove('hidden');
+                    btnText.textContent = 'Draft Onboarding Plan';
+                    spinner.classList.add('hidden');
+                    draftPlanBtn.disabled = false;
+                });
+            }
+
+            // --- Learning Module Drafter Demo Logic ---
+            const draftModuleBtn = document.getElementById('draft-module-btn');
+            if (draftModuleBtn) {
+                draftModuleBtn.addEventListener('click', async () => {
+                    const outputDiv = document.getElementById('learning-module-output');
+                    const btnText = document.getElementById('draft-module-btn-text');
+                    const spinner = document.getElementById('draft-module-spinner');
+                    const moduleTopic = document.getElementById('module-topic').value;
+                    const learningObjectives = document.getElementById('learning-objectives').value;
+
+                    btnText.textContent = 'Drafting...';
+                    spinner.classList.remove('hidden');
+                    draftModuleBtn.disabled = true;
+                    outputDiv.classList.add('hidden');
+
+                    const prompt = `You are an expert Instructional Designer. Create a concise micro-learning module outline for the topic: "${moduleTopic}". The outline should be based on these learning objectives: "${learningObjectives}". The outline must include: 1. A brief introduction. 2. Three key talking points. 3. One knowledge check question with multiple-choice answers. Format the entire response in clean HTML, using <h4> for section titles. Do not include any introductory text or markdown formatting.`;
+                    
+                    const result = await callGemini(prompt);
+                    const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
+                    
+                    outputDiv.innerHTML = cleanedResult;
+                    outputDiv.classList.remove('hidden');
+                    btnText.textContent = 'Draft Module Outline';
+                    spinner.classList.add('hidden');
+                    draftModuleBtn.disabled = false;
+                });
+            }
+
+            // --- Demo Tabs Logic ---
+            document.getElementById('projects-grid').addEventListener('click', function(e) {
+                if (e.target.classList.contains('demo-tab')) {
+                    const tab = e.target;
+                    const demoToolkitContainer = tab.closest('.demo-container');
+                    if (!demoToolkitContainer) return;
+
+                    const tabContainer = tab.parentElement;
+                    
+                    tabContainer.querySelectorAll('.demo-tab').forEach(t => {
+                        t.classList.remove('active');
+                        t.classList.add('text-gray-400', 'hover:bg-gray-700', 'hover:text-white');
+                    });
+                    
+                    tab.classList.add('active');
+                    tab.classList.remove('text-gray-400', 'hover:bg-gray-700', 'hover:text-white');
+
+                    const tabContentId = tab.dataset.tab;
+                    demoToolkitContainer.querySelectorAll('[data-tab-content]').forEach(content => {
+                        if (content.id === `${tabContentId}-content`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+            
+            // --- Interview Prep AI Logic ---
+            function addInterviewPrepEventListeners() {
+                document.querySelectorAll('.generate-interview-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const li = e.currentTarget.closest('li');
+                        let prepContainer = li.nextElementSibling;
+                        
+                        if (prepContainer && prepContainer.classList.contains('prep-container')) {
+                            prepContainer.remove();
+                            return;
+                        }
+                        
+                        prepContainer = document.createElement('li');
+                        prepContainer.className = 'prep-container mt-2 mb-4 ml-6';
+                        prepContainer.innerHTML = `<div class="flex items-center p-4 bg-[#111827] rounded-lg"><div class="spinner"></div><p class="ml-4 text-gray-400">Generating question...</p></div>`;
+                        li.insertAdjacentElement('afterend', prepContainer);
+
+                        const achievementText = e.currentTarget.closest('li').querySelector('span:nth-child(2)').textContent;
+                        const prompt = `You are an expert interviewer. Based on this resume achievement: "${achievementText}", generate one challenging behavioral interview question and then draft a sample answer using the STAR method. The question should start with "Tell me about a time when...". Format the entire response in clean HTML with headings for the question and each STAR component (Situation, Task, Action, Result). Do not wrap the response in markdown code fences.`;
+
+                        const result = await callGemini(prompt);
+                        const cleanedResult = result.replace(/^```html\s*/, '').replace(/```$/, '').trim();
+                        prepContainer.innerHTML = `<div class="p-4 bg-[#111827] rounded-lg border-l-4 border-[#2DD4BF]">${cleanedResult}</div>`;
+                    });
                 });
             }
             
